@@ -7,24 +7,28 @@ import (
 	"log"
 	"time"
 
-	"RemoteMonitor/cmd/web"
-	"github.com/a-h/templ"
+	"RemoteMonitor/internal/handlers"
+	"RemoteMonitor/static"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"nhooyr.io/websocket"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
+
+	handlers := &handlers.Handler{}
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	fileServer := http.FileServer(http.FS(web.Files))
+	e.Static("/static", "static")
+	fileServer := http.FileServer(http.FS(static.Files))
 	e.GET("/assets/*", echo.WrapHandler(fileServer))
 
-	e.GET("/web", echo.WrapHandler(templ.Handler(web.HelloForm())))
-	e.POST("/hello", echo.WrapHandler(http.HandlerFunc(web.HelloWebHandler)))
+	e.GET("/", handlers.Dashboard)
 
-	e.GET("/", s.HelloWorldHandler)
+	/* e.GET("/web", echo.WrapHandler(templ.Handler(web.HelloForm())))
+	e.POST("/hello", echo.WrapHandler(http.HandlerFunc(web.HelloWebHandler))) */
 
 	e.GET("/health", s.healthHandler)
 
