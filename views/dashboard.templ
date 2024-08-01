@@ -2,8 +2,12 @@ package views
 
 import "RemoteMonitor/views/layouts"
 
+templ DashboardHeader() {
+	<title>RemoteMonitor | Dashboard</title>
+}
+
 templ Home() {
-	@layouts.Base() {
+	@layouts.Base(DashboardHeader()) {
 		<div>
 			<h1>Home</h1>
 			<p>Welcome to the home page</p>
