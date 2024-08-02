@@ -8,7 +8,7 @@ templ UnauthHeader() {
 
 templ Login() {
 	@layouts.BaseUnauth(UnauthHeader()) {
-		<div class="h-screen bg-white dark:bg-gray-800">
+		<div class="h-screen bg-white dark:bg-backgrounddark">
 			<div class="flex justify-center items-center h-full">
 				<form>
 					<label for="input-group-1" class="block mb-2 text-sm font-medium text-primary dark:text-primaryDark">Your Email</label>
@@ -33,5 +33,14 @@ templ Login() {
 				</form>
 			</div>
 		</div>
+		<script>
+			if (localStorage.theme === 'dark' || (!('theme' in localStorage))) {
+			  document.documentElement.classList.add('dark')
+			  themeToggleLightIcon.classList.remove('hidden');
+			} else {
+			  document.documentElement.classList.remove('dark')
+			  themeToggleDarkIcon.classList.remove('hidden');
+			}
+		</script>
 	}
 }

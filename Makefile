@@ -6,7 +6,7 @@ all: build
 build:
 	@echo "Building..."
 	@templ generate
-	@npx tailwindcss -i static/assets/css/input.css -o static/assets/css/output.css
+	@npx tailwindcss -i ./static/assets/css/input.css -o ./static/assets/css/output.css
 	@go build -o main cmd/web/main.go
 
 # Run the application
@@ -27,6 +27,9 @@ clean:
 	@echo "Cleaning..."
 	@rm -f main
 
+tailwind:
+	@npx tailwindcss -i static/assets/css/input.css -o static/assets/css/output.css
+	
 # Live Reload
 watch:
 	@if command -v air > /dev/null; then \
@@ -44,4 +47,4 @@ watch:
 	    fi; \
 	fi
 
-.PHONY: all build run test clean
+.PHONY: all build run test clean tailwind
