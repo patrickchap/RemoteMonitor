@@ -10,27 +10,28 @@ templ Login() {
 	@layouts.BaseUnauth(UnauthHeader()) {
 		<div class="h-screen bg-white dark:bg-backgrounddark">
 			<div class="flex justify-center items-center h-full">
-				<form>
-					<label for="input-group-1" class="block mb-2 text-sm font-medium text-primary dark:text-primaryDark">Your Email</label>
-					<div class="relative mb-6">
-						<div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-							<svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
-								<path d="m10.036 8.278 9.258-7.79A1.979 1.979 0 0 0 18 0H2A1.987 1.987 0 0 0 .641.541l9.395 7.737Z"></path>
-								<path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2.5l-8.759 7.317Z"></path>
-							</svg>
+				<div class="w-full max-w-sm p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+					<form class="space-y-6" action="#">
+						<h5 class="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h5>
+						<div>
+							<label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+							<input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" placeholder="name@company.com" required/>
 						</div>
-						<input type="text" id="input-group-1" class="bg-gray-50 border border-primay-300 text-primary text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-secondarydark dark:border-gray-600 dark:placeholder-gray-400 dark:text-primaryDark dark:focus:ring-blue-500 dark:focus:border-primaryDark" placeholder="Email"/>
-					</div>
-					<label for="input-group-1" class="block mb-2 text-sm font-medium text-primary dark:text-primaryDark">Password</label>
-					<div class="relative mb-6">
-						<div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-							<svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-								<path fill-rule="evenodd" d="M8 10V7a4 4 0 1 1 8 0v3h1a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h1Zm2-3a2 2 0 1 1 4 0v3h-4V7Zm2 6a1 1 0 0 1 1 1v3a1 1 0 1 1-2 0v-3a1 1 0 0 1 1-1Z" clip-rule="evenodd"></path>
-							</svg>
+						<div>
+							<label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your password</label>
+							<input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required/>
 						</div>
-						<input type="text" id="input-group-1" class="bg-secondary border border-primay text-primary text-sm rounded-lg focus:ring-primary focus:border-primaryDark block w-full ps-10 p-2.5 !dark:bg-secondarydark dark:border-primaryDark !dark:placeholder-gray-400 dark:text-primaryDark !dark:focus:ring-primaryDark !dark:focus:border-primaryDark" placeholder="Password"/>
-					</div>
-				</form>
+						<div class="flex items-start">
+							<div class="flex items-start">
+								<div class="flex items-center h-5">
+									<input id="remember" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required/>
+								</div>
+								<label for="remember" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
+							</div>
+						</div>
+						<button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Login to your account</button>
+					</form>
+				</div>
 			</div>
 		</div>
 		<script>

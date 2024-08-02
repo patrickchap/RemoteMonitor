@@ -22,12 +22,9 @@ themeToggleBtn.addEventListener('click', function() {
   // if set via local storage previously
   if (localStorage.theme == 'dark' || localStorage.theme == 'light') {
     if (localStorage.theme === 'light') {
-      console.log("set dark");
       document.documentElement.classList.add('dark')
       localStorage.theme = 'dark';
     } else {
-
-      console.log("set light");
       document.documentElement.classList.remove('dark');
       localStorage.theme = 'light';
     }
