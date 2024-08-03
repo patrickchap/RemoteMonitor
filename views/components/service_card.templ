@@ -3,7 +3,7 @@ package component
 import "strconv"
 
 templ Card(service string, value int, className string, fontClassNames string) {
-	<a href="#" class={ "block max-w-sm p-6 bg-white border rounded-lg shadow hover:bg-gray-100  dark:bg-surface-dark  dark:hover:bg-gray-700", className }>
+	<a href="#" class={ "block md:w-full p-6 bg-white border rounded-lg shadow hover:bg-gray-100  dark:bg-surface-dark  dark:hover:bg-gray-700", className }>
 		<h5 class={ "mb-2 text-2xl font-bold tracking-tight", fontClassNames }>{ strconv.Itoa(value) } { service } Services</h5>
 		<p class={ "font-normal", fontClassNames }>View Details</p>
 	</a>
