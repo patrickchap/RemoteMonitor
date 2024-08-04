@@ -26,3 +26,7 @@ func (h *Handler) Login(c echo.Context) error {
 func (h *Handler) WsTest(c echo.Context) error {
 	return helpers.RenderTemplate(c, views.WebsocketClient())
 }
+
+func (h *Handler) Hosts(c echo.Context) error {
+	return helpers.RenderTemplate(c, views.Hosts())
+}

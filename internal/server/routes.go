@@ -52,6 +52,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	e.GET("/", handlers.Login)
 	e.GET("/dashboard", handlers.Dashboard)
+	e.GET("/hosts", handlers.Hosts)
 
 	/* e.GET("/web", echo.WrapHandler(templ.Handler(web.HelloForm())))
 	e.POST("/hello", echo.WrapHandler(http.HandlerFunc(web.HelloWebHandler))) */
