@@ -20,7 +20,8 @@ test:
 	@echo "Testing..."
 	@go test ./... -v
 
-
+sqlc:
+	sqlc generate
 
 # Clean the binary
 clean:
@@ -47,4 +48,4 @@ watch:
 	    fi; \
 	fi
 
-.PHONY: all build run test clean tailwind
+.PHONY: all build run test clean tailwind sqlc

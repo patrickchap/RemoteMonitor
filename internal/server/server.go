@@ -9,21 +9,19 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 
-	"RemoteMonitor/internal/database"
+	database "RemoteMonitor/internal/database/sqlc"
 )
 
 type Server struct {
-	port int
-
-	db database.Service
+	port  int
+	store database.Store
 }
 
-func NewServer() *http.Server {
+func NewServer(store database.Store) *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	NewServer := &Server{
-		port: port,
-
-		db: database.New(),
+		port:  port,
+		store: store,
 	}
 
 	// Declare Server config

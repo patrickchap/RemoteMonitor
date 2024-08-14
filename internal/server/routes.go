@@ -57,8 +57,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	/* e.GET("/web", echo.WrapHandler(templ.Handler(web.HelloForm())))
 	e.POST("/hello", echo.WrapHandler(http.HandlerFunc(web.HelloWebHandler))) */
 
-	e.GET("/health", s.healthHandler)
-
 	e.GET("/ws", s.websocketHandler)
 	e.GET("/wstest", handlers.WsTest)
 	return e
@@ -70,8 +68,4 @@ func (s *Server) HelloWorldHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, resp)
-}
-
-func (s *Server) healthHandler(c echo.Context) error {
-	return c.JSON(http.StatusOK, s.db.Health())
 }
