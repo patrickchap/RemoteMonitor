@@ -9,7 +9,7 @@ import (
 )
 
 type Querier interface {
-	GetHosts(ctx context.Context, arg GetHostsParams) (Host, error)
+	GetHosts(ctx context.Context, arg GetHostsParams) ([]Host, error)
 }
 
 var _ Querier = (*Queries)(nil)

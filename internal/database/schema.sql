@@ -8,7 +8,27 @@ CREATE TABLE hosts (
     location VARCHAR(255),
     os VARCHAR(255),
     active INTEGER DEFAULT 1,
-    last_updated DATETIME
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP 
+);
+
+
+CREATE TABLE host_services (
+    id INTEGER PRIMARY KEY,
+    host_id INTEGER,
+    service_id INTEGER,
+    active INTEGER DEFAULT 1,
+    schedule_number INTEGER DEFAULT 3,
+    schedule_unit VARCHAR(255) DEFAULT 'm',  
+    last_check TIMESTAMP DEFAULT '0001-01-01 00:00:01',
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP 
+);
+
+CREATE TABLE services (
+    id INTEGER PRIMARY KEY,
+    service_name VARCHAR(255),  
+    active INTEGER DEFAULT 1,
+    icon VARCHAR(255),  
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP 
 );
 
 CREATE TABLE users (

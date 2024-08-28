@@ -42,7 +42,9 @@ func (s *Server) websocketHandler(c echo.Context) error {
 
 func (s *Server) RegisterRoutes() http.Handler {
 
-	handlers := &handlers.Handler{}
+	handlers := &handlers.Handler{
+		Store: s.Store,
+	}
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())

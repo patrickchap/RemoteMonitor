@@ -1,0 +1,500 @@
+   10  ls
+   11  cd github/
+   12  ls
+   13  cd patrickchap/
+   14  ls
+   15  cd go/
+   16  ls
+   17  cd web-service-gin/
+   18  ls
+   19  nvim main.go 
+   20  cd ../../
+   21  ls
+   22  cd ls
+   23  ls
+   24  ls
+   25  nvim .
+   26  cd ../
+   27  ls
+   28  cd clips-api/
+   29  nvim .
+   30  cd ../BookTalkTwo/
+   31  nvim .
+   32  ls
+   33  git status
+   34  make run
+   35  npx prisma studio
+   36  Make run
+   37  cat Makefile 
+   38  nvim .
+   39  turso db shell book-talk
+   40  turso auth login
+   41  turso db shell book-talk
+   42  make watch
+   43  nvim .
+   44  make sqlc
+   45  make watch
+   46  ls
+   47  nvim README.md 
+   48  cd ..
+   49  go-blueprint --version
+   50  go-blueprint --v
+   51  go-blueprint --help
+   52  go-blueprint create -h
+   53  go-blueprint create -d
+   54  go-blueprint -d
+   55  go-blueprint -h
+   56  go-blueprint -f
+   57  go-blueprint --help
+   58  go-blueprint -h
+   59  go-blueprint create -h
+   60  go-blueprint create -f
+   61  go-blueprint create --framework
+   62  go-blueprint --framework
+   63  go-blueprint create --f
+   64  go-blueprint create --help
+   65  turso db shell book-talk
+   66  go-blueprint create --name RemoteMonitor --framework echo --driver sqlite --advanced --feature htmx --feature githubaction --feature tailwind --git commit
+   67  go-blueprint create --name RemoteMonitor --framework echo --driver sqlite --advanced --feature htmx --feature githubaction --feature tailwind --git commit
+   68  go-blueprint create --name RemoteMonitor --framework echo --driver sqlite --advanced --feature htmx --feature githubaction --git commit
+   69  go-blueprint create --name RemoteMonitor --framework echo --driver sqlite --advanced --feature htmx --feature githubaction
+   70  ls
+   71  cd RemoteMonitor/
+   72  ls
+   73  cd ../BookTalkTwo/
+   74  ls
+   75  cd ..
+   76  go-blueprint create --name my-project --framework chi --driver mysql --advanced --feature htmx --feature githubaction --feature websocket --feature tailwind --git commit
+   77  go install github.com/melkeydev/go-blueprint@latest
+   78  go-blueprint create --name my-project --framework chi --driver mysql --advanced --feature htmx --feature githubaction --feature websocket --feature tailwind --git commit
+   79  nvim .
+   80  cd my-project/
+   81  ls
+   82  cat Makefile 
+   83  make watch
+   84  make build
+   85  cat Makefile 
+   86  make clean
+   87  make build
+   88  nvim Makefile 
+   89  npm install -D tailwindcss
+   90  make build
+   91  tailwindcss --version
+   92  nvim Makefile
+   93  make build
+   94  nvim .
+   95  cd ../my-project/
+   96  make watch
+   97  make watch
+   98  cd ..
+   99  rm my-project/
+  100  rm -rf my-project/
+  101  go-blueprint create -h
+  102  ls
+  103  rm -rf RemoteMonitor/
+  104  go-blueprint create --name RemoteMonitor --framework echo --driver sqlite --advanced --feature htmx --feature githubaction --feature websocket --feature tailwind --git commit
+  105  cd RemoteMonitor/
+  106  nvim .
+  107  nvim .
+  108  cd ../BookTalkTwo
+  109  nvim .
+  110  ls
+  111  cat sqlc.yaml 
+  112  cat sqlc.yaml > ../RemoteMonitor/sqlc.yaml
+  113  nvim .
+  114  make watch
+  115  make build
+  116  nvim .
+  117  cd ../RemoteMonitor/
+  118  make watch
+  119  nvim .
+  120  ls
+  121  cd cmd/web/assets/
+  122  ls
+  123  cd css/
+  124  ls
+  125  cat input.css > ../../../../static/css/input.css
+  126  cat output.css > ../../../../static/css/output.css
+  127  ls
+  128  cat ../../../../static/css/output.css
+  129  ls
+  130  rm input.css output.css 
+  131  ls
+  132  cd ..
+  133  ls
+  134  rm -rf css/
+  135  ls
+  136  cd js
+  137  ls
+  138  cat htmx.min.js ../../../../static/js/htmx.min.js
+  139  cat htmx.min.js > ../../../../static/js/htmx.min.js
+  140  rm htmx.min.js 
+  141  ls
+  142  nvim .
+  143  cd ../../../
+  144  ls
+  145  cd ..
+  146  ls
+  147  nvim .
+  148  ls
+  149  cat static/css/output.css 
+  150  nvim .
+  151  make build
+  152  nvim Makefile 
+  153  make build
+  154  make build
+  155  nvim .
+  156  cd ../
+  157  go-blueprint create --name my-project --framework gin --driver postgres --git commit
+  158  cd my-project/
+  159  ls
+  160  nvim .
+  161  cd ..
+  162  rm -rf my-project/
+  163  go-blueprint create --name my-project --framework chi --driver mysql --advanced --feature htmx --feature githubaction --feature websocket --feature tailwind --git commit
+  164  cd my-project/
+  165  ls
+  166  nvim .
+  167  make build
+  168  nvim .
+  169  cd ../
+  170  cd RemoteMonitor/
+  171  make watch
+  172  make build
+  173  make watch
+  174  make clean
+  175  make build
+  176  nvim .
+  177  make watch
+  178  make watch
+  179  lsof -i :8080
+  180  kill -9 1003
+  181  ls
+  182  lsof -i :8080
+  183  kill -9 33050
+  184  make watch
+  185  make build
+  186  make watch
+  187  nvim .
+  188  make build
+  189  nvim .
+  190  make build
+  191  make watch
+  192  make build
+  193  make clean
+  194  make watch
+  195  npm install -D tailwindcss
+  196  make watch 
+  197  make build
+  198  make watch
+  199  make build
+  200   nvim .
+  201  make watch
+  202  make build
+  203  make watch
+  204  ls
+  205  git status
+  206  ls
+  207  ls -a
+  208  nvim .gitignore 
+  209  git status
+  210  git remote add origin https://github.com/patrickchap/RemoteMonitor.git
+  211  git status
+  212  git branch -M main
+  213  git status
+  214  git add .
+  215  git status
+  216  git commit -m 'first commit, setting up repo and basic outline of project.'
+  217  git push origin main
+  218  git status
+  219  make watch
+  220  npm install flowbite
+  221  make watch
+  222  make watch
+  223  make build
+  224  make watch
+  225  make build
+  226  cd ../portfolio/
+  227  git status
+  228  cat .gitignore 
+  229  make watch
+  230  rm -rf node_modules/
+  231  nvim .gitignore 
+  232  git status
+  233  git add .
+  234  git commit -m 'remove node modules and more outlining'
+  235  git push origin main
+  236  ls
+  237  rm -rf node_modules/
+  238  ls
+  239  git status
+  240  git add .
+  241  git commit -m 'remove node modules'
+  242  git push origin main
+  243  git status
+  244  git status
+  245  ls
+  246  ls
+  247  nvim .
+  248  make watch
+  249  make clean
+  250  make build
+  251  npm install
+  252  git status
+  253  make build
+  254  nvim .
+  255  nvim .
+  256  nvim .
+  257  cd ../../git/portfolio/
+  258  make watch
+  259  make build
+  260  make build
+  261  make build
+  262      make build
+  263  make watch
+  264  make watch
+  265  make watch
+  266  make clean
+  267  make build
+  268  make watch
+  269  make clean
+  270  make build
+  271  make watch
+  272  make clean
+  273  make build
+  274  make watch
+  275  make watch
+  276  make watch
+  277  make watch
+  278  make watch
+  279  make watch
+  280  make build
+  281  make build
+  282  make build
+  283  make build
+  284  make clean
+  285  make build
+  286  make build
+  287  make build
+  288  make temp
+  289  make templ
+  290  templ
+  291  templ generate
+  292  make watch
+  293  make build
+  294  git status
+  295  git diff tailwind.config.js 
+  296  nvim .
+  297  nvim .
+  298  make watch
+  299  git diff tailwind.config.js 
+  300  make watch
+  301  make watch
+  302  make watch
+  303  git status
+  304  git add .
+  305  git commit -m 'adding more outling pages. login and start of dark mode'
+  306  git push origin main
+  307  make watch
+  308  make watch
+  309  make tailwind
+  310  make watch
+  311  make tailwind
+  312  make watch
+  313  make watch
+  314  make watch
+  315  make watch
+  316  make watch
+  317  make clean
+  318  make watch
+  319  make watch
+  320  make tailwind
+  321  make tailwidn
+  322  make tailwind
+  323   make tailwind
+  324  make watch
+  325  make watch
+  326  make tailwind
+  327  make tailwind
+  328  make watch
+  329  make build
+  330  make build
+  331  make build
+  332  make watch
+  333  make build
+  334  make build
+  335  make watch
+  336  make watch
+  337  make watch
+  338  make watch
+  339  make tailwind
+  340  make watch
+  341  make tailwind
+  342  make watch
+  343  make watch
+  344  make watch
+  345  make watch
+  346  make watch
+  347  make tailwind
+  348  make watch
+  349  make watch
+  350  make watch
+  351  make watch
+  352  make watch
+  353  make watch
+  354  npm uninstall flowbite
+  355  make watch
+  356  make watch
+  357  make watch
+  358  make watch
+  359  make watch
+  360  make tailwind
+  361  make tailwind
+  362  make watch
+  363  make tailwind
+  364  make tailwind
+  365  make tailwind
+  366  make tailwind
+  367  make watch
+  368  make tailwind
+  369  make watch
+  370  make clean
+  371  make watch
+  372  make build
+  373  make build
+  374  make watch
+  375  make clean
+  376  make watch
+  377  npm install -D tailwindcss
+  378  npx tailwindcss init
+  379  rm tailwind.config.js 
+  380  npx tailwindcss init
+  381  nvim .
+  382  make watch
+  383  make watch
+  384  make watch
+  385  npm install flowbite
+  386  make watch
+  387  git satus
+  388  git status
+  389  git add .
+  390  git commit -m 'fixing dark mode'
+  391  git push origin main
+  392  make watch
+  393  nvim .
+  394  make watch
+  395  make build
+  396  make watch
+  397  make build
+  398  make build
+  399  make watch
+  400  make watch
+  401  make watch
+  402  nvim .
+  403  go mod tidy
+  404  make watch
+  405  nvim .
+  406  make build
+  407  make watch
+  408  git satus
+  409  git status
+  410  git add .
+  411  git commit -m 'adding cards and more styling/outlining'
+  412  git push origin main
+  413  nvim .
+  414  nvim .
+  415  make watch
+  416  git status
+  417  git add .
+  418  git commit -m 'adding outline for dashboard. (breadcrumb, table, formatting)'
+  419  git push origin main
+  420  make watch
+  421  nvim .
+  422  cd ../wpt3/
+  423  cd ../wpt3/
+  424  npm run dev
+  425  cd ..
+  426  ls
+  427  mkdir o-snake-game
+  428  rm o-snake-game/
+  429  rm -rf o-snake-game/
+  430  mkdir go-snake-game
+  431  cd go-snake-game/
+  432  go get github.com/nsf/termbox-go
+  433  go mod init
+  434  nvim main.go
+  435  nvim main.go 
+  436  go mod init
+  437  go mod init snake
+  438  ls
+  439  go get github.com/nsf/termbox-go
+  440  nvim main.go 
+  441  go run main.go
+  442  go run main.go
+  443  go run main.go
+  444  go run main.go
+  445  go run main.go
+  446  go run main.go
+  447  go run main.go
+  448  nvim main.go
+  449  cd ..
+  450  ls
+  451  rm -rf go-snake-game/
+  452  mkdir game
+  453  cd game
+  454  go mod init game
+  455  ls
+  456  go get github.com/hajimehoshi/ebiten/v2
+  457  nvim main.go
+  458  go run main.go
+  459  nvim main.go
+  460  go run main.go
+  461  nvim .
+  462  make watch
+  463  git satus
+  464  git add .
+  465  git commit -m 'adding host layout'
+  466  git push origin main
+  467  ls
+  468  cd ../../github/
+  469  ls
+  470  cd BookTalkTwo/
+  471  ls
+  472  nvim .
+  473  nvim .
+  474  turso db show --url monitor
+  475  turso auth login
+  476  turso db show --url monitor
+  477  which turso
+  478  turso db tokens create monitor
+  479  make watch
+  480  nvim .
+  481  nvim .
+  482  go get github.com/tursodatabase/libsql-client-go/libsql
+  483  nvim .
+  484  clear
+  485  turso db shell monitor
+  486  nvim Makefile 
+  487  make sqlc
+  488  nvim .
+  489  nvim .
+  490  make sqlc
+  491  nvim .
+  492  make watch
+  493  nvim .
+  494  turso db shell monitor
+  495  nvim .
+  496  make sqlc
+  497  nvim .
+  498  git status
+  499  git add .
+  500  git commit -m 'adding db connection and beginning schema'
+  501  git push origin main
+  502  expr 123456 + 7890
+  503  name="Lane"
+  504  echo name
+  505  echo $name
+  506  echo hello $name
+  507  history --max 100
+  508  history
+  509  history > bash_history.txt

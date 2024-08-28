@@ -3,6 +3,7 @@ package views
 import (
 	"RemoteMonitor/views/layouts"
 	"RemoteMonitor/views/components"
+	"RemoteMonitor/views/viewModels"
 )
 
 templ DashboardHeader() {
@@ -13,7 +14,7 @@ var homeBreadcrumb = map[string]string{
 	"Dashboard": "/dashboard",
 }
 
-templ Home() {
+templ Home(hosts []viewModels.HostList) {
 	@layouts.Base(DashboardHeader()) {
 		<div class="pt-20 px-6 bg-gray-200 dark:bg-background-dark h-full sm:ml-64">
 			@component.Breadcrumb(homeBreadcrumb, "Dashboard")
@@ -27,7 +28,7 @@ templ Home() {
 			<h1 class="text-3xl text-gray-700 dark:text-gray-200 p-2 my-3">Hosts</h1>
 			<hr class="border-b dark:border-gray-700 w-full"/>
 			<div class="my-4">
-				@component.ServiceTable()
+				@component.ServiceTable(hosts)
 			</div>
 		</div>
 	}

@@ -14,14 +14,14 @@ import (
 
 type Server struct {
 	port  int
-	store database.Store
+	Store database.Store
 }
 
 func NewServer(store database.Store) *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	NewServer := &Server{
 		port:  port,
-		store: store,
+		Store: store,
 	}
 
 	// Declare Server config

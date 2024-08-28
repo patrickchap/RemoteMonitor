@@ -21,6 +21,25 @@ type Host struct {
 	LastUpdated   sql.NullTime   `json:"last_updated"`
 }
 
+type HostService struct {
+	ID             int64          `json:"id"`
+	HostID         sql.NullInt64  `json:"host_id"`
+	ServiceID      sql.NullInt64  `json:"service_id"`
+	Active         sql.NullInt64  `json:"active"`
+	ScheduleNumber sql.NullInt64  `json:"schedule_number"`
+	ScheduleUnit   sql.NullString `json:"schedule_unit"`
+	LastCheck      sql.NullTime   `json:"last_check"`
+	LastUpdated    sql.NullTime   `json:"last_updated"`
+}
+
+type Service struct {
+	ID          int64          `json:"id"`
+	ServiceName sql.NullString `json:"service_name"`
+	Active      sql.NullInt64  `json:"active"`
+	Icon        sql.NullString `json:"icon"`
+	LastUpdated sql.NullTime   `json:"last_updated"`
+}
+
 type User struct {
 	ID          int64          `json:"id"`
 	FirstName   sql.NullString `json:"first_name"`
