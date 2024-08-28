@@ -5,7 +5,7 @@ import (
 
 	"fmt"
 
-	"RemoteMonitor/internal/handlers"
+	hd "RemoteMonitor/internal/handlers"
 	"RemoteMonitor/static"
 
 	"github.com/gorilla/websocket"
@@ -42,9 +42,17 @@ func (s *Server) websocketHandler(c echo.Context) error {
 
 func (s *Server) RegisterRoutes() http.Handler {
 
-	handlers := &handlers.Handler{
+	handlers := &hd.Handler{
 		Store: s.Store,
 	}
+	handlers.NewSession(hd.CookieOpts{
+		Name:   "auth-session",
+		Secret: "super-secret-key",
+		MaxAge: 86400 * 7,
+	}, func(c echo.Context) error {
+		return c.Redirect(http.StatusFound,
+			c.Echo().Reverse("/"))
+	})
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())

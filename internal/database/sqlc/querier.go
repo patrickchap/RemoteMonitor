@@ -9,6 +9,9 @@ import (
 )
 
 type Querier interface {
+	CreateHost(ctx context.Context, arg CreateHostParams) (Host, error)
+	GetHost(ctx context.Context, id int64) (Host, error)
+	GetHostByHostname(ctx context.Context, hostName string) (Host, error)
 	GetHosts(ctx context.Context, arg GetHostsParams) ([]Host, error)
 }
 
