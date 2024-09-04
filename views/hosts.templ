@@ -1,8 +1,8 @@
 package views
 
 import (
+	component "RemoteMonitor/views/components"
 	"RemoteMonitor/views/layouts"
-	"RemoteMonitor/views/components"
 	"RemoteMonitor/views/viewModels"
 )
 
@@ -15,9 +15,9 @@ var hostsBreadcrumb = map[string]string{
 }
 
 templ Hosts(hosts []viewModels.HostList) {
-	@layouts.Base(DashboardHeader()) {
+	@layouts.Base(HostsdHeader()) {
 		<div class="pt-20 px-6 bg-gray-200 dark:bg-background-dark h-full sm:ml-64">
-			@component.Breadcrumb(homeBreadcrumb, "Dashboard")
+			@component.Breadcrumb(hostsBreadcrumb, "Hosts")
 			<h1 class="text-xl text-gray-700 dark:text-gray-200 p-2 my-3 rounded-lg w-full bg-white dark:bg-surface-dark">Hosts</h1>
 			<hr class="border-b dark:border-gray-700 w-full"/>
 			<div class="my-4">
