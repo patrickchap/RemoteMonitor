@@ -1,14 +1,16 @@
 package server
 
 import (
+	"errors"
 	"net/http"
 
 	"fmt"
 
 	hd "RemoteMonitor/internal/handlers"
 	"RemoteMonitor/static"
-
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/websocket"
+	"github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -71,6 +73,25 @@ func (s *Server) RegisterRoutes() http.Handler {
 	e.GET("/wstest", handlers.WsTest)
 
 	e.POST("/login", handlers.PostLogin)
+
+	adminGroup := e.Group("/admin")
+	adminGroup.Use(echojwt.WithConfig(echojwt.Config{
+		SigningKey:  []byte(hd.GetJWTSecret()),
+		TokenLookup: "cookie:access-token",
+	}))
+	adminGroup.Use(hd.TokenRefresherMiddleware)
+	adminGroup.GET("/", func(c echo.Context) error {
+		token, ok := c.Get("user").(*jwt.Token) // by default token is stored under `user` key
+		if !ok {
+			return errors.New("JWT token missing or invalid")
+		}
+		claims, ok := token.Claims.(jwt.MapClaims) // by default claims is of type `jwt.MapClaims`
+		if !ok {
+			return errors.New("failed to cast claims as jwt.MapClaims")
+		}
+		return c.JSON(http.StatusOK, claims)
+	})
+
 	return e
 }
 

@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -14,17 +15,25 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// move to env.......
 const (
-	accessTokenCookieName = "access-token"
-	jwtSecretKey          = "some-secret-key"
+	accessTokenCookieName  = "access-token"
+	refreshTokenCookieName = "refresh-token"
+	jwtSecretKey           = "some-secret-key"
+	jwtRefreshSecretKey    = "some-refresh-secret-key"
 )
 
 func GetJWTSecret() string {
 	return jwtSecretKey
 }
 
+func GetRefreshJWTSecret() string {
+	return jwtRefreshSecretKey
+}
+
 type Claims struct {
 	Name string `json:"name"`
+	Id   int64  `json:"id"`
 	jwt.StandardClaims
 }
 
@@ -81,7 +90,20 @@ func GenerateTokensAndSetCookies(user *database.User, c echo.Context) error {
 	setTokenCookie(accessTokenCookieName, accessToken, exp, c)
 	setUserCookie(user, exp, c)
 
+	refreshToken, exp, err := generateRefreshToken(user)
+	if err != nil {
+		return err
+	}
+	setTokenCookie(refreshTokenCookieName, refreshToken, exp, c)
+
 	return nil
+}
+
+func generateRefreshToken(user *database.User) (string, time.Time, error) {
+	// Declare the expiration time of the token - 24 hours.
+	expirationTime := time.Now().Add(24 * time.Hour)
+
+	return generateToken(user, expirationTime, []byte(GetRefreshJWTSecret()))
 }
 
 func generateAccessToken(user *database.User) (string, time.Time, error) {
@@ -94,6 +116,7 @@ func generateAccessToken(user *database.User) (string, time.Time, error) {
 func generateToken(user *database.User, expirationTime time.Time, secret []byte) (string, time.Time, error) {
 	claims := &Claims{
 		Name: user.FirstName.String + " " + user.LastName.String,
+		Id:   user.ID,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -130,4 +153,39 @@ func setUserCookie(user *database.User, expiration time.Time, c echo.Context) {
 
 func JWTErrorChecker(err error, c echo.Context) error {
 	return c.Redirect(http.StatusMovedPermanently, c.Echo().Reverse("userSignInForm"))
+}
+
+func TokenRefresherMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		if c.Get("user") == nil {
+			return next(c)
+		}
+		u := c.Get("user").(*jwt.Token)
+
+		claims := u.Claims.(*Claims)
+
+		if time.Unix(claims.ExpiresAt, 0).Sub(time.Now()) < 15*time.Minute {
+			rc, err := c.Cookie(refreshTokenCookieName)
+			if err == nil && rc != nil {
+				tkn, err := jwt.ParseWithClaims(rc.Value, claims, func(token *jwt.Token) (interface{}, error) {
+					return []byte(GetRefreshJWTSecret()), nil
+				})
+				if err != nil {
+					if err == jwt.ErrSignatureInvalid {
+						c.Response().Writer.WriteHeader(http.StatusUnauthorized)
+					}
+				}
+
+				if tkn != nil && tkn.Valid {
+					_ = GenerateTokensAndSetCookies(&database.User{
+						FirstName: sql.NullString{String: strings.Split(claims.Name, " ")[0], Valid: true},
+						LastName:  sql.NullString{String: strings.Split(claims.Name, " ")[1], Valid: true},
+						ID:        claims.Id,
+					}, c)
+				}
+			}
+		}
+
+		return next(c)
+	}
 }
