@@ -69,6 +69,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	e.GET("/ws", s.websocketHandler)
 	e.GET("/wstest", handlers.WsTest)
+
+	e.POST("/login", handlers.PostLogin)
 	return e
 }
 

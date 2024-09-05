@@ -2190,6 +2190,11 @@ input:checked + .toggle-bg {
   color: rgb(132 225 188 / var(--tw-text-opacity));
 }
 
+.dark\:text-red-400:where(.dark, .dark *) {
+  --tw-text-opacity: 1;
+  color: rgb(249 128 128 / var(--tw-text-opacity));
+}
+
 .dark\:text-red-600:where(.dark, .dark *) {
   --tw-text-opacity: 1;
   color: rgb(224 36 36 / var(--tw-text-opacity));

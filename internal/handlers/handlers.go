@@ -6,6 +6,7 @@ import (
 	"RemoteMonitor/views"
 	"RemoteMonitor/views/viewModels"
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -36,6 +37,10 @@ type getHostParams struct {
 }
 
 func (h *Handler) Dashboard(c echo.Context) error {
+
+	userId := h.Get(c, "userId").(int64)
+	fmt.Printf(">>>>>>> userId: %v", userId)
+
 	req := new(getHostParams)
 	if err := c.Bind(req); err != nil {
 		return c.String(http.StatusBadRequest, "bad request")
@@ -107,15 +112,6 @@ func (h *Handler) Hosts(c echo.Context) error {
 	}
 
 	return helpers.RenderTemplate(c, views.Hosts(hostList))
-}
-func (h *Handler) Login(c echo.Context) error {
-	var isLoggedIn bool
-	isLoggedIn = false
-	if isLoggedIn {
-		return c.Redirect(302, "/dashboard")
-	}
-
-	return helpers.RenderTemplate(c, views.Login())
 }
 
 func (h *Handler) WsTest(c echo.Context) error {
