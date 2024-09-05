@@ -10,6 +10,30 @@ import (
 	"database/sql"
 )
 
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT id, first_name, last_name, user_active, access_level, email, password, deleted_at, created_at, updated_at 
+FROM users
+WHERE email = ?
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email sql.NullString) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.FirstName,
+		&i.LastName,
+		&i.UserActive,
+		&i.AccessLevel,
+		&i.Email,
+		&i.Password,
+		&i.DeletedAt,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getUserForAuth = `-- name: GetUserForAuth :one
 SELECT email, password, id 
 FROM users 
