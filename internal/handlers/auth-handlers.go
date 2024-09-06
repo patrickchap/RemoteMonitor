@@ -7,6 +7,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -15,13 +16,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// move to env.......
-const (
-	accessTokenCookieName  = "access-token"
-	refreshTokenCookieName = "refresh-token"
-	jwtSecretKey           = "some-secret-key"
-	jwtRefreshSecretKey    = "some-refresh-secret-key"
-)
+var accessTokenCookieName = os.Getenv("ACCESS_TOKEN_SECRET")
+var refreshTokenCookieName = os.Getenv("REFRESH_TOKEN_SECRET")
+var jwtSecretKey = os.Getenv("JWT_SECRET_KEY")
+var jwtRefreshSecretKey = os.Getenv("JWT_REFRESH_SECRET_KEY")
 
 func GetJWTSecret() string {
 	return jwtSecretKey
