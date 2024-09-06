@@ -7,19 +7,21 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var accessTokenCookieName = os.Getenv("ACCESS_TOKEN_SECRET")
-var refreshTokenCookieName = os.Getenv("REFRESH_TOKEN_SECRET")
-var jwtSecretKey = os.Getenv("JWT_SECRET_KEY")
-var jwtRefreshSecretKey = os.Getenv("JWT_REFRESH_SECRET_KEY")
+// move to env.......
+const (
+	accessTokenCookieName  = "access-token"
+	refreshTokenCookieName = "refresh-token"
+	jwtSecretKey           = "some-secret-key"
+	jwtRefreshSecretKey    = "some-refresh-secret-key"
+)
 
 func GetJWTSecret() string {
 	return jwtSecretKey
@@ -32,14 +34,14 @@ func GetRefreshJWTSecret() string {
 type Claims struct {
 	Name string `json:"name"`
 	Id   int64  `json:"id"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func (h *Handler) Login(c echo.Context) error {
 	var isLoggedIn bool
 	isLoggedIn = false
 	if isLoggedIn {
-		return c.Redirect(302, "/dashboard")
+		return c.Redirect(302, "/admin/dashboard")
 	}
 
 	return helpers.RenderTemplate(c, views.Login())
@@ -75,7 +77,7 @@ func (h *Handler) PostLogin(c echo.Context) error {
 
 	h.Set(c, "userId", user.ID)
 	h.Set(c, "userEmail", user.Email)
-	c.Response().Header().Set("HX-Redirect", "/dashboard")
+	c.Response().Header().Set("HX-Redirect", "/admin/dashboard")
 	return nil
 }
 
@@ -115,8 +117,8 @@ func generateToken(user *database.User, expirationTime time.Time, secret []byte)
 	claims := &Claims{
 		Name: user.FirstName.String + " " + user.LastName.String,
 		Id:   user.ID,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expirationTime.Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
 	}
 
@@ -155,14 +157,21 @@ func JWTErrorChecker(err error, c echo.Context) error {
 
 func TokenRefresherMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
+
 		if c.Get("user") == nil {
 			return next(c)
 		}
+
 		u := c.Get("user").(*jwt.Token)
 
-		claims := u.Claims.(*Claims)
-
-		if time.Unix(claims.ExpiresAt, 0).Sub(time.Now()) < 15*time.Minute {
+		claims, ok := u.Claims.(jwt.MapClaims)
+		if !ok {
+			fmt.Println("failed to cast claims as jwt.MapClaims")
+			return next(c)
+		}
+		expirationFloat := claims["exp"].(float64)
+		expiration := int64(expirationFloat)
+		if time.Unix(expiration, 0).Sub(time.Now()) < 15*time.Minute {
 			rc, err := c.Cookie(refreshTokenCookieName)
 			if err == nil && rc != nil {
 				tkn, err := jwt.ParseWithClaims(rc.Value, claims, func(token *jwt.Token) (interface{}, error) {
@@ -173,12 +182,16 @@ func TokenRefresherMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 						c.Response().Writer.WriteHeader(http.StatusUnauthorized)
 					}
 				}
-
+				name := claims["name"].(string)
+				fmt.Printf(">>>>> name: %v", name)
+				idFloat := claims["id"].(float64)
+				id := int64(idFloat)
+				fmt.Printf(">>>>> id: %v", id)
 				if tkn != nil && tkn.Valid {
 					_ = GenerateTokensAndSetCookies(&database.User{
-						FirstName: sql.NullString{String: strings.Split(claims.Name, " ")[0], Valid: true},
-						LastName:  sql.NullString{String: strings.Split(claims.Name, " ")[1], Valid: true},
-						ID:        claims.Id,
+						FirstName: sql.NullString{String: strings.Split(name, " ")[0], Valid: true},
+						LastName:  sql.NullString{String: strings.Split(name, " ")[1], Valid: true},
+						ID:        id,
 					}, c)
 				}
 			}

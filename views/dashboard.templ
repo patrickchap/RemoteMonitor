@@ -1,8 +1,8 @@
 package views
 
 import (
+	component "RemoteMonitor/views/components"
 	"RemoteMonitor/views/layouts"
-	"RemoteMonitor/views/components"
 	"RemoteMonitor/views/viewModels"
 )
 
@@ -11,7 +11,7 @@ templ DashboardHeader() {
 }
 
 var homeBreadcrumb = map[string]string{
-	"Dashboard": "/dashboard",
+	"Dashboard": "/admin/dashboard",
 }
 
 templ Home(hosts []viewModels.HostList) {

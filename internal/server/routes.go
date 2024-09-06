@@ -63,8 +63,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	e.GET("/assets/*", echo.WrapHandler(fileServer))
 
 	e.GET("/", handlers.Login)
-	e.GET("/dashboard", handlers.Dashboard)
-	e.GET("/hosts", handlers.Hosts)
 
 	/* e.GET("/web", echo.WrapHandler(templ.Handler(web.HelloForm())))
 	e.POST("/hello", echo.WrapHandler(http.HandlerFunc(web.HelloWebHandler))) */
@@ -78,6 +76,15 @@ func (s *Server) RegisterRoutes() http.Handler {
 	adminGroup.Use(echojwt.WithConfig(echojwt.Config{
 		SigningKey:  []byte(hd.GetJWTSecret()),
 		TokenLookup: "cookie:access-token",
+		ErrorHandler: func(c echo.Context, err error) error {
+			_, ok := c.Get("user").(*jwt.Token) // by default token is stored under `user` key
+			if !ok {
+				fmt.Println("Redirecting to login")
+				target := c.Request().URL.Path
+				return c.Redirect(http.StatusFound, fmt.Sprintf("/?target=%s", target))
+			}
+			return nil
+		},
 	}))
 	adminGroup.Use(hd.TokenRefresherMiddleware)
 	adminGroup.GET("/", func(c echo.Context) error {
@@ -89,8 +96,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 		if !ok {
 			return errors.New("failed to cast claims as jwt.MapClaims")
 		}
+		fmt.Println(claims.GetExpirationTime())
+		name := claims["name"].(string)
+		idFloat := claims["id"].(float64)
+		id := int64(idFloat)
+		fmt.Println(name, id)
 		return c.JSON(http.StatusOK, claims)
 	})
+
+	adminGroup.GET("/dashboard", handlers.Dashboard)
+	adminGroup.GET("/hosts", handlers.Hosts)
 
 	return e
 }
