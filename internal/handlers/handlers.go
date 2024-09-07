@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 )
@@ -38,8 +39,12 @@ type getHostParams struct {
 
 func (h *Handler) Dashboard(c echo.Context) error {
 
-	userId := h.Get(c, "userId").(int64)
-	fmt.Printf(">>>>>>> userId: %v", userId)
+	u, ok := c.Get("user").(*jwt.Token)
+	if !ok {
+		return c.String(http.StatusInternalServerError, "internal server error")
+	}
+
+	fmt.Printf(">>>>>>> user: %v", u)
 
 	req := new(getHostParams)
 	if err := c.Bind(req); err != nil {

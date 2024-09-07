@@ -71,7 +71,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	e.GET("/wstest", handlers.WsTest)
 
 	e.POST("/login", handlers.PostLogin)
-
 	adminGroup := e.Group("/admin")
 	adminGroup.Use(echojwt.WithConfig(echojwt.Config{
 		SigningKey:  []byte(hd.GetJWTSecret()),

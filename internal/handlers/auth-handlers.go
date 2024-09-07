@@ -38,13 +38,12 @@ type Claims struct {
 }
 
 func (h *Handler) Login(c echo.Context) error {
-	var isLoggedIn bool
-	isLoggedIn = false
-	if isLoggedIn {
-		return c.Redirect(302, "/admin/dashboard")
-	}
 
-	return helpers.RenderTemplate(c, views.Login())
+	if c.Get("user") == nil {
+		return helpers.RenderTemplate(c, views.Login())
+	}
+	return c.Redirect(302, "/admin/dashboard")
+
 }
 
 type PostLoginRequest struct {
@@ -77,6 +76,10 @@ func (h *Handler) PostLogin(c echo.Context) error {
 
 	h.Set(c, "userId", user.ID)
 	h.Set(c, "userEmail", user.Email)
+	if target := c.QueryParam("target"); target != "" {
+		c.Response().Header().Set("HX-Redirect", target)
+		return nil
+	}
 	c.Response().Header().Set("HX-Redirect", "/admin/dashboard")
 	return nil
 }
@@ -86,7 +89,6 @@ func GenerateTokensAndSetCookies(user *database.User, c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf(">>>>>>> accessToken: %v", accessToken)
 	setTokenCookie(accessTokenCookieName, accessToken, exp, c)
 	setUserCookie(user, exp, c)
 
