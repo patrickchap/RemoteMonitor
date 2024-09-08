@@ -20,7 +20,8 @@ CREATE TABLE host_services (
     schedule_number INTEGER DEFAULT 3,
     schedule_unit VARCHAR(255) DEFAULT 'm',  
     last_check TIMESTAMP DEFAULT '0001-01-01 00:00:01',
-    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP 
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(255)
 );
 
 CREATE TABLE services (

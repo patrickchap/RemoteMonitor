@@ -30,6 +30,7 @@ type HostService struct {
 	ScheduleUnit   sql.NullString `json:"schedule_unit"`
 	LastCheck      sql.NullTime   `json:"last_check"`
 	LastUpdated    sql.NullTime   `json:"last_updated"`
+	Status         sql.NullString `json:"status"`
 }
 
 type Service struct {

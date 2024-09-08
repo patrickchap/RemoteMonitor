@@ -154,3 +154,52 @@ func (q *Queries) GetHosts(ctx context.Context, arg GetHostsParams) ([]Host, err
 	}
 	return items, nil
 }
+
+const getHostsWithServices = `-- name: GetHostsWithServices :many
+SELECT h.id, h.host_name, hs.status, s.service_name
+FROM hosts h LEFT JOIN host_services AS hs 
+ON h.id = hs.host_id LEFT JOIN services AS s 
+ON hs.service_id = s.id
+Limit ?
+Offset ?
+`
+
+type GetHostsWithServicesParams struct {
+	Limit  int64 `json:"limit"`
+	Offset int64 `json:"offset"`
+}
+
+type GetHostsWithServicesRow struct {
+	ID          int64          `json:"id"`
+	HostName    string         `json:"host_name"`
+	Status      sql.NullString `json:"status"`
+	ServiceName sql.NullString `json:"service_name"`
+}
+
+func (q *Queries) GetHostsWithServices(ctx context.Context, arg GetHostsWithServicesParams) ([]GetHostsWithServicesRow, error) {
+	rows, err := q.db.QueryContext(ctx, getHostsWithServices, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetHostsWithServicesRow{}
+	for rows.Next() {
+		var i GetHostsWithServicesRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.HostName,
+			&i.Status,
+			&i.ServiceName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

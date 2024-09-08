@@ -106,6 +106,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	adminGroup.GET("/dashboard", handlers.Dashboard)
 	adminGroup.GET("/hosts", handlers.Hosts)
+	adminGroup.GET("/host/edit/:id", handlers.HostEdit)
 
 	return e
 }

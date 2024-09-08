@@ -4,7 +4,6 @@ import (
 	db "RemoteMonitor/internal/database/sqlc"
 	"RemoteMonitor/internal/helpers"
 	"RemoteMonitor/views"
-	"RemoteMonitor/views/viewModels"
 	"database/sql"
 	"fmt"
 	"net/http"
@@ -55,68 +54,54 @@ func (h *Handler) Dashboard(c echo.Context) error {
 		req.Limit = 10
 	}
 
-	params := db.GetHostsParams{
+	params := db.GetHostsWithServicesParams{
 		Limit:  req.Limit,
 		Offset: req.Offset,
 	}
 
-	hosts, err := h.Store.GetHosts(c.Request().Context(), params)
+	hosts, err := h.Store.GetHostsWithServices(c.Request().Context(), params)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "internal server error")
 	}
-	var hostList []viewModels.HostList
-	for _, host := range hosts {
-		hostList = append(hostList, viewModels.HostList{
-			HostName:      host.HostName,
-			CanonicalName: nullStringToString(host.CanonicalName),
-			Url:           nullStringToString(host.Url),
-			Ip:            nullStringToString(host.Ip),
-			Ipv6:          nullStringToString(host.Ipv6),
-			Location:      nullStringToString(host.Location),
-			Os:            nullStringToString(host.Os),
-			Active:        nullInt64ToString(host.Active),
-			LastUpdated:   nullTimetoString(host.LastUpdated),
-		})
-	}
 
-	return helpers.RenderTemplate(c, views.Home(hostList))
+	return helpers.RenderTemplate(c, views.Home(hosts))
 }
 
 func (h *Handler) Hosts(c echo.Context) error {
 	req := new(getHostParams)
 	if err := c.Bind(req); err != nil {
-		return c.String(http.StatusBadRequest, "bad request")
+		return c.String(http.StatusBadRequest, "Bad Request")
 	}
 
 	if req.Limit == 0 {
 		req.Limit = 10
 	}
 
-	params := db.GetHostsParams{
+	params := db.GetHostsWithServicesParams{
 		Limit:  req.Limit,
 		Offset: req.Offset,
 	}
 
-	hosts, err := h.Store.GetHosts(c.Request().Context(), params)
+	hosts, err := h.Store.GetHostsWithServices(c.Request().Context(), params)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "internal server error")
 	}
-	var hostList []viewModels.HostList
-	for _, host := range hosts {
-		hostList = append(hostList, viewModels.HostList{
-			HostName:      host.HostName,
-			CanonicalName: nullStringToString(host.CanonicalName),
-			Url:           nullStringToString(host.Url),
-			Ip:            nullStringToString(host.Ip),
-			Ipv6:          nullStringToString(host.Ipv6),
-			Location:      nullStringToString(host.Location),
-			Os:            nullStringToString(host.Os),
-			Active:        nullInt64ToString(host.Active),
-			LastUpdated:   nullTimetoString(host.LastUpdated),
-		})
+
+	return helpers.RenderTemplate(c, views.Hosts(hosts))
+}
+
+type HostEditParams struct {
+	Id int64 `param:"id"`
+}
+
+func (h *Handler) HostEdit(c echo.Context) error {
+	req := new(HostEditParams)
+	if err := c.Bind(req); err != nil {
+		return c.String(http.StatusBadRequest, "Bad Request")
 	}
 
-	return helpers.RenderTemplate(c, views.Hosts(hostList))
+	fmt.Printf("request: %d", req)
+	return helpers.RenderTemplate(c, views.HostEdit(req.Id))
 }
 
 func (h *Handler) WsTest(c echo.Context) error {

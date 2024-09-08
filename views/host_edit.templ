@@ -1,0 +1,27 @@
+package views
+
+import (
+	component "RemoteMonitor/views/components"
+	"RemoteMonitor/views/layouts"
+	"strconv"
+)
+
+templ HostsEditdHeader() {
+	<title>RemoteMonitor | Hosts Edit</title>
+}
+
+var hostsEditBreadcrumb = map[string]string{
+	"Hosts": "/admin/hosts",
+	"Edit":  "",
+}
+
+templ HostEdit(id int64) {
+	@layouts.Base(HostsEditdHeader()) {
+		<h1>edit host with id: { strconv.FormatInt(id, 10) }</h1>
+		<div class="pt-20 px-6 bg-gray-200 dark:bg-background-dark h-full sm:ml-64">
+			@component.Breadcrumb(hostsEditBreadcrumb, "Edit")
+			<h1 class="text-xl text-gray-700 dark:text-gray-200 p-2 my-3 rounded-lg w-full bg-white dark:bg-surface-dark">Edit Hosts</h1>
+			<hr class="border-b dark:border-gray-700 w-full"/>
+		</div>
+	}
+}

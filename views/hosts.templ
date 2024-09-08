@@ -1,9 +1,9 @@
 package views
 
 import (
+	database "RemoteMonitor/internal/database/sqlc"
 	component "RemoteMonitor/views/components"
 	"RemoteMonitor/views/layouts"
-	"RemoteMonitor/views/viewModels"
 )
 
 templ HostsdHeader() {
@@ -14,14 +14,14 @@ var hostsBreadcrumb = map[string]string{
 	"Hosts": "/hosts",
 }
 
-templ Hosts(hosts []viewModels.HostList) {
+templ Hosts(hosts []database.GetHostsWithServicesRow) {
 	@layouts.Base(HostsdHeader()) {
 		<div class="pt-20 px-6 bg-gray-200 dark:bg-background-dark h-full sm:ml-64">
 			@component.Breadcrumb(hostsBreadcrumb, "Hosts")
-			<h1 class="text-xl text-gray-700 dark:text-gray-200 p-2 my-3 rounded-lg w-full bg-white dark:bg-surface-dark">Hosts</h1>
+			<h1 class="text-xl text-gray-700 dark:text-gray-200 p-2 my-3 rounded-lg w-full bg-white dark:bg-surface-dark">All Hosts</h1>
 			<hr class="border-b dark:border-gray-700 w-full"/>
 			<div class="my-4">
-				@component.ServiceTable(hosts)
+				@component.HostServiceTable(hosts)
 			</div>
 		</div>
 	}

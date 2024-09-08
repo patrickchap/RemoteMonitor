@@ -24,3 +24,10 @@ INSERT INTO hosts (
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
 RETURNING *;
 
+-- name: GetHostsWithServices :many 
+SELECT h.id, h.host_name, hs.status, s.service_name
+FROM hosts h LEFT JOIN host_services AS hs 
+ON h.id = hs.host_id LEFT JOIN services AS s 
+ON hs.service_id = s.id
+Limit ?
+Offset ?;

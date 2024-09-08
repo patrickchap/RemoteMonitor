@@ -1,9 +1,9 @@
 package views
 
 import (
+	database "RemoteMonitor/internal/database/sqlc"
 	component "RemoteMonitor/views/components"
 	"RemoteMonitor/views/layouts"
-	"RemoteMonitor/views/viewModels"
 )
 
 templ DashboardHeader() {
@@ -30,7 +30,7 @@ templ pendingIcon() {
 	<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis h-8 w-8 text-gray-700 dark:text-gray-200 mr-3"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
 }
 
-templ Home(hosts []viewModels.HostList) {
+templ Home(hosts []database.GetHostsWithServicesRow) {
 	@layouts.Base(DashboardHeader()) {
 		<div class="pt-20 px-6 bg-gray-200 dark:bg-background-dark h-full sm:ml-64">
 			@component.Breadcrumb(homeBreadcrumb, "Dashboard")
@@ -44,7 +44,7 @@ templ Home(hosts []viewModels.HostList) {
 			<h1 class="text-3xl text-gray-700 dark:text-gray-200 p-2 my-3">Hosts</h1>
 			<hr class="border-b dark:border-gray-700 w-full"/>
 			<div class="my-4">
-				@component.ServiceTable(hosts)
+				@component.HostServiceTable(hosts)
 			</div>
 		</div>
 	}
