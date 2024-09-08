@@ -46,6 +46,43 @@ func (h *Handler) Login(c echo.Context) error {
 
 }
 
+func (h *Handler) Logout(c echo.Context) error {
+	c.SetCookie(&http.Cookie{
+		Name:    "user",
+		Value:   "",
+		Path:    "/",
+		Expires: time.Now().Add(-1 * time.Hour),
+		MaxAge:  -1,
+	})
+
+	c.SetCookie(&http.Cookie{
+		Name:    accessTokenCookieName,
+		Value:   "",
+		Path:    "/",
+		Expires: time.Now().Add(-1 * time.Hour),
+		MaxAge:  -1,
+	})
+
+	c.SetCookie(&http.Cookie{
+		Name:    refreshTokenCookieName,
+		Value:   "",
+		Path:    "/",
+		Expires: time.Now().Add(-1 * time.Hour),
+		MaxAge:  -1,
+	})
+
+	c.SetCookie(&http.Cookie{
+		Name:    "auth-session",
+		Value:   "",
+		Path:    "/",
+		Expires: time.Now().Add(-1 * time.Hour),
+		MaxAge:  -1,
+	})
+
+	c.Response().Header().Set("HX-Redirect", "/admin/dashboard")
+	return nil
+}
+
 type PostLoginRequest struct {
 	Email    string `form:"email"`
 	Password string `form:"password"`
