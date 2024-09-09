@@ -174,6 +174,40 @@ func (h *Handler) PutEditHostDetails(c echo.Context) error {
 	return helpers.RenderTemplate(c, views.EditHostForm(viewHost))
 }
 
+func (h *Handler) HostCreateForm(c echo.Context) error {
+	return helpers.RenderTemplate(c, views.CreateHostForm())
+}
+
+type PostCreateHostParams struct {
+	HostName      string `form:"host_name"`
+	CanonicalName string `form:"canonical_name"`
+	Url           string `form:"url"`
+	Ip            string `form:"ip"`
+	Ipv6          string `form:"ipv6"`
+}
+
+func (h *Handler) HostCreate(c echo.Context) error {
+	req := new(PostCreateHostParams)
+	if err := c.Bind(req); err != nil {
+		return c.String(http.StatusBadRequest, "Bad Request")
+	}
+	params := db.CreateHostParams{
+		HostName:      req.HostName,
+		CanonicalName: sql.NullString{String: req.CanonicalName, Valid: true},
+		Url:           sql.NullString{String: req.Url, Valid: true},
+		Ip:            sql.NullString{String: req.Ip, Valid: true},
+		Ipv6:          sql.NullString{String: req.Ipv6, Valid: true},
+	}
+
+	host, err := h.Store.CreateHost(c.Request().Context(), params)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	c.Response().Header().Set("HX-Redirect", fmt.Sprintf("/admin/host/edit/%d", host.ID))
+	return nil
+}
+
 func (h *Handler) WsTest(c echo.Context) error {
 	return helpers.RenderTemplate(c, views.WebsocketClient())
 }

@@ -110,6 +110,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	adminGroup.GET("/host/edit/form/:id", handlers.GetEditHostDetails)
 
 	adminGroup.PUT("/host/edit/form", handlers.PutEditHostDetails)
+
+	adminGroup.GET("/host/create", handlers.HostCreateForm)
+	adminGroup.POST("/host/create", handlers.HostCreate)
 	return e
 }
 
