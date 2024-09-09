@@ -203,3 +203,51 @@ func (q *Queries) GetHostsWithServices(ctx context.Context, arg GetHostsWithServ
 	}
 	return items, nil
 }
+
+const updateHost = `-- name: UpdateHost :one
+UPDATE hosts SET 
+    host_name = ?,
+    canonical_name = ?,
+    url = ?,
+    ip = ?,
+    ipv6 = ?,
+    last_updated = ?
+WHERE id = ?
+RETURNING id, host_name, canonical_name, url, ip, ipv6, location, os, active, last_updated
+`
+
+type UpdateHostParams struct {
+	HostName      string         `json:"host_name"`
+	CanonicalName sql.NullString `json:"canonical_name"`
+	Url           sql.NullString `json:"url"`
+	Ip            sql.NullString `json:"ip"`
+	Ipv6          sql.NullString `json:"ipv6"`
+	LastUpdated   sql.NullTime   `json:"last_updated"`
+	ID            int64          `json:"id"`
+}
+
+func (q *Queries) UpdateHost(ctx context.Context, arg UpdateHostParams) (Host, error) {
+	row := q.db.QueryRowContext(ctx, updateHost,
+		arg.HostName,
+		arg.CanonicalName,
+		arg.Url,
+		arg.Ip,
+		arg.Ipv6,
+		arg.LastUpdated,
+		arg.ID,
+	)
+	var i Host
+	err := row.Scan(
+		&i.ID,
+		&i.HostName,
+		&i.CanonicalName,
+		&i.Url,
+		&i.Ip,
+		&i.Ipv6,
+		&i.Location,
+		&i.Os,
+		&i.Active,
+		&i.LastUpdated,
+	)
+	return i, err
+}

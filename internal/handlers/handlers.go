@@ -4,10 +4,12 @@ import (
 	db "RemoteMonitor/internal/database/sqlc"
 	"RemoteMonitor/internal/helpers"
 	"RemoteMonitor/views"
+	viewmodels "RemoteMonitor/views/viewModels"
 	"database/sql"
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/sessions"
@@ -100,8 +102,76 @@ func (h *Handler) HostEdit(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Bad Request")
 	}
 
-	fmt.Printf("request: %d", req)
 	return helpers.RenderTemplate(c, views.HostEdit(req.Id))
+}
+
+type HostEditFormParams struct {
+	Id int64 `param:"id"`
+}
+
+func (h *Handler) GetEditHostDetails(c echo.Context) error {
+	req := new(HostEditFormParams)
+	if err := c.Bind(req); err != nil {
+		return c.String(http.StatusBadRequest, "Bad Request")
+	}
+
+	host, err := h.Store.GetHost(c.Request().Context(), req.Id)
+	if err != nil {
+
+		return c.String(http.StatusBadRequest, "Bad Request")
+	}
+
+	viewHost := viewmodels.Host{
+		ID:            host.ID,
+		HostName:      host.HostName,
+		CanonicalName: host.CanonicalName,
+		Url:           host.Url,
+		Ip:            host.Ip,
+		Ipv6:          host.Ipv6,
+	}
+	return helpers.RenderTemplate(c, views.EditHostForm(viewHost))
+
+}
+
+type PutEditHostParams struct {
+	ID            int64  `form:"id"`
+	HostName      string `form:"host_name"`
+	CanonicalName string `form:"canonical_name"`
+	Url           string `form:"url"`
+	Ip            string `form:"ip"`
+	Ipv6          string `form:"ipv6"`
+}
+
+func (h *Handler) PutEditHostDetails(c echo.Context) error {
+	req := new(PutEditHostParams)
+	if err := c.Bind(req); err != nil {
+		return c.String(http.StatusBadRequest, "Bad Request")
+	}
+
+	updateHost := db.UpdateHostParams{
+		ID:            req.ID,
+		HostName:      req.HostName,
+		CanonicalName: sql.NullString{String: req.CanonicalName, Valid: true},
+		Url:           sql.NullString{String: req.Url, Valid: true},
+		Ip:            sql.NullString{String: req.Ip, Valid: true},
+		Ipv6:          sql.NullString{String: req.Ipv6, Valid: true},
+		LastUpdated:   sql.NullTime{Time: time.Now(), Valid: true},
+	}
+
+	host, err := h.Store.UpdateHost(c.Request().Context(), updateHost)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	viewHost := viewmodels.Host{
+		HostName:      host.HostName,
+		CanonicalName: host.CanonicalName,
+		Url:           host.Url,
+		Ip:            host.Ip,
+		Ipv6:          host.Ipv6,
+	}
+
+	return helpers.RenderTemplate(c, views.EditHostForm(viewHost))
 }
 
 func (h *Handler) WsTest(c echo.Context) error {

@@ -34,14 +34,13 @@ templ Home(hosts []database.GetHostsWithServicesRow) {
 	@layouts.Base(DashboardHeader()) {
 		<div class="pt-20 px-6 bg-gray-200 dark:bg-background-dark h-full sm:ml-64">
 			@component.Breadcrumb(homeBreadcrumb, "Dashboard")
-			<h1 class="text-xl text-gray-700 dark:text-gray-200 p-2 my-3 rounded-lg w-full bg-white dark:bg-surface-dark">Overview</h1>
-			<div class="grid grid-cols-1 md:grid-cols-4 md:w-full gap-4">
+			<div class="grid grid-cols-1 md:grid-cols-4 md:w-full gap-4 pt-10">
 				@component.Card("Healthy", 0, "dark:border-green-700 dark:bg-green-900 text-green-700 bg-green-100", "text-green-700 dark:text-green-300", healthyIcon())
 				@component.Card("Warning", 0, "dark:border-yellow-700 dark:bg-yellow-900 text-yellow-300 bg-yellow-100", "text-yellow-600 dark:text-yellow-400", warningIcon())
 				@component.Card("Problem", 0, "dark:border-red-700 dark:bg-red-900 text-red-600 bg-red-100", "text-red-600 dark:text-red-400", problemIcon())
 				@component.Card("Pending", 0, "dark:border-gray-700 dark:bg-gray-900 text-gray-700 dark:text-gray-200 bg-gray-100", "text-gray-700 dark:text-gray-200", pendingIcon())
 			</div>
-			<h1 class="text-3xl text-gray-700 dark:text-gray-200 p-2 my-3">Hosts</h1>
+			<h1 class="text-xl text-gray-700 dark:text-gray-200 p-2 my-3 rounded-lg w-full font-semibold">Hosts</h1>
 			<hr class="border-b dark:border-gray-700 w-full"/>
 			<div class="my-4">
 				@component.HostServiceTable(hosts)

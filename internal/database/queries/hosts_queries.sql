@@ -24,6 +24,18 @@ INSERT INTO hosts (
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) 
 RETURNING *;
 
+-- name: UpdateHost :one
+UPDATE hosts SET 
+    host_name = ?,
+    canonical_name = ?,
+    url = ?,
+    ip = ?,
+    ipv6 = ?,
+    last_updated = ?
+WHERE id = ?
+RETURNING *;
+
+
 -- name: GetHostsWithServices :many 
 SELECT h.id, h.host_name, hs.status, s.service_name
 FROM hosts h LEFT JOIN host_services AS hs 

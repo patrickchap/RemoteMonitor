@@ -2,9 +2,6 @@
   --tw-color-secondary: #03DAC6;
 }
 
-input[type="text"] {
-    background-color: var(--tw-color-secondary) !important;
-}
 
 @media (prefers-color-scheme: dark) {
     background-color: var(--tw-color-secondarydark) !important;
