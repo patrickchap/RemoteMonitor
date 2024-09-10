@@ -44,8 +44,8 @@ templ HostEdit(id int64) {
 				<div class="hidden p-4 rounded-lg" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 					<div hx-get={ fmt.Sprintf("/admin/host/edit/form/%d", id) } hx-target="this" hx-swap="outerHTML" hx-trigger="load"></div>
 				</div>
-				<div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-					<p class="text-sm text-gray-500 dark:text-gray-400">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Dashboard tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
+				<div class="hidden p-4 rounded-lg" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+					@EditServicesForm([]viewmodels.HostServiceEdit{})
 				</div>
 				<div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel" aria-labelledby="settings-tab">
 					<p class="text-sm text-gray-500 dark:text-gray-400">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Settings tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
@@ -56,6 +56,37 @@ templ HostEdit(id int64) {
 			</div>
 		</div>
 	}
+}
+
+templ EditServicesForm(serviceEdit []viewmodels.HostServiceEdit) {
+	<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+		<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+			<thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300 tracking-wider">
+				<tr>
+					<th scope="col" class="px-6 py-3">
+						Service	
+					</th>
+					<th scope="col" class="px-6 py-3">
+						Schedule	
+					</th>
+					<th scope="col" class="px-6 py-3">
+						Remove Service	
+					</th>
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-gray-700">
+				for _, service := range serviceEdit {
+					<tr class="odd:bg-white odd:dark:bg-background-dark even:bg-gray-50 even:dark:bg-surface-dark border-b dark:border-gray-700">
+						<th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+							{ service.HostName }
+						</th>
+						<td class="px-6 py-4"></td>
+						<td class="px-6 py-4"></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
 }
 
 templ EditHostForm(host viewmodels.Host) {

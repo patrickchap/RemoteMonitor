@@ -15,6 +15,7 @@ type Querier interface {
 	GetHostByHostname(ctx context.Context, hostName string) (Host, error)
 	GetHosts(ctx context.Context, arg GetHostsParams) ([]Host, error)
 	GetHostsWithServices(ctx context.Context, arg GetHostsWithServicesParams) ([]GetHostsWithServicesRow, error)
+	GetServices(ctx context.Context) (Service, error)
 	GetUserByEmail(ctx context.Context, email sql.NullString) (User, error)
 	GetUserForAuth(ctx context.Context, email sql.NullString) (GetUserForAuthRow, error)
 	UpdateHost(ctx context.Context, arg UpdateHostParams) (Host, error)
