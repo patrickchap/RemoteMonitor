@@ -208,6 +208,58 @@ func (h *Handler) HostCreate(c echo.Context) error {
 	return nil
 }
 
+type GetHostServicesParams struct {
+	HostId int64 `param:"host_id"`
+}
+
+func (h *Handler) GetHostServices(c echo.Context) error {
+	req := new(GetHostServicesParams)
+	if err := c.Bind(req); err != nil {
+		return c.String(http.StatusBadRequest, "Bad Request")
+	}
+
+	hostServices, err := h.Store.GetHostServices(c.Request().Context(), sql.NullInt64{Int64: req.HostId, Valid: true})
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	acitveService, err := h.Store.GetServices(c.Request().Context())
+
+	availableServices := []viewmodels.Service{}
+	for _, service := range acitveService {
+		found := false
+		for _, hostService := range hostServices {
+			if service.ID == hostService.ServiceID.Int64 {
+				found = true
+				break
+			}
+		}
+		if !found {
+			availableServices = append(availableServices, viewmodels.Service{
+				ServiceId:   service.ID,
+				ServiceName: service.ServiceName.String,
+			})
+		}
+	}
+
+	fmt.Printf(">>>>> availableService: %v", availableServices)
+	hostServiceModel := []viewmodels.HostServiceEdit{}
+
+	for _, hostService := range hostServices {
+		hostServiceModel = append(hostServiceModel, viewmodels.HostServiceEdit{
+			HostId:         hostService.HostID.Int64,
+			HostName:       hostService.HostName,
+			ServiceId:      hostService.ServiceID.Int64,
+			ServiceName:    hostService.ServiceName.String,
+			Active:         hostService.Active.Int64,
+			ScheduleNumber: hostService.ScheduleNumber.Int64,
+			ScheduleUnit:   hostService.ScheduleUnit.String,
+		})
+	}
+
+	return helpers.RenderTemplate(c, views.EditServicesForm(hostServiceModel, availableServices))
+}
+
 func (h *Handler) WsTest(c echo.Context) error {
 	return helpers.RenderTemplate(c, views.WebsocketClient())
 }

@@ -9,20 +9,36 @@ import (
 	"context"
 )
 
-const getServices = `-- name: GetServices :one
+const getServices = `-- name: GetServices :many
 SELECT id, service_name, active, icon, last_updated FROM services
 WHERE active = 1
 `
 
-func (q *Queries) GetServices(ctx context.Context) (Service, error) {
-	row := q.db.QueryRowContext(ctx, getServices)
-	var i Service
-	err := row.Scan(
-		&i.ID,
-		&i.ServiceName,
-		&i.Active,
-		&i.Icon,
-		&i.LastUpdated,
-	)
-	return i, err
+func (q *Queries) GetServices(ctx context.Context) ([]Service, error) {
+	rows, err := q.db.QueryContext(ctx, getServices)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Service{}
+	for rows.Next() {
+		var i Service
+		if err := rows.Scan(
+			&i.ID,
+			&i.ServiceName,
+			&i.Active,
+			&i.Icon,
+			&i.LastUpdated,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
