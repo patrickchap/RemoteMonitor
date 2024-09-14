@@ -119,16 +119,6 @@ run the application
 make run
 ```
 
-Create DB container
-```bash
-make docker-run
-```
-
-Shutdown DB container
-```bash
-make docker-down
-```
-
 live reload the application
 ```bash
 make watch
