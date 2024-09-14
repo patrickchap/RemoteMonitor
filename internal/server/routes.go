@@ -115,6 +115,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	adminGroup.POST("/host/create", handlers.HostCreate)
 
 	adminGroup.GET("/host/edit/hostservice/:id", handlers.GetHostServices)
+	adminGroup.POST("/hostservice/create", handlers.PostHostService)
 	return e
 }
 

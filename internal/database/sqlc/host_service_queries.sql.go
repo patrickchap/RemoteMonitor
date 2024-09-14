@@ -10,6 +10,34 @@ import (
 	"database/sql"
 )
 
+const createHostService = `-- name: CreateHostService :one
+INSERT INTO host_services(host_id, service_id)
+VALUES(?, ?)
+RETURNING id, host_id, service_id, active, schedule_number, schedule_unit, last_check, last_updated, status
+`
+
+type CreateHostServiceParams struct {
+	HostID    sql.NullInt64 `json:"host_id"`
+	ServiceID sql.NullInt64 `json:"service_id"`
+}
+
+func (q *Queries) CreateHostService(ctx context.Context, arg CreateHostServiceParams) (HostService, error) {
+	row := q.db.QueryRowContext(ctx, createHostService, arg.HostID, arg.ServiceID)
+	var i HostService
+	err := row.Scan(
+		&i.ID,
+		&i.HostID,
+		&i.ServiceID,
+		&i.Active,
+		&i.ScheduleNumber,
+		&i.ScheduleUnit,
+		&i.LastCheck,
+		&i.LastUpdated,
+		&i.Status,
+	)
+	return i, err
+}
+
 const getHostServices = `-- name: GetHostServices :many
 SELECT hs.id, hs.host_id, hs.service_id, hs.active, hs.schedule_number, hs.schedule_unit, hs.last_check, hs.last_updated, hs.status, h.host_name, s.service_name
 FROM host_services as hs

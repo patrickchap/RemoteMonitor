@@ -58,8 +58,8 @@ templ HostEdit(id int64) {
 	}
 }
 
-templ EditServicesForm(serviceEdit []viewmodels.HostServiceEdit, availableServices []viewmodels.Service) {
-	<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+templ EditServicesForm(serviceEdit []viewmodels.HostServiceEdit, availableServices []viewmodels.Service, HostId int64) {
+	<div id="hostservices" class="relative overflow-x-auto shadow-md sm:rounded-lg">
 		<!-- Modal toggle -->
 		<div class="w-full flex justify-end pb-2">
 			<button id="add-service" data-modal-target="crud-modal" data-modal-toggle="crud-modal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
@@ -84,11 +84,12 @@ templ EditServicesForm(serviceEdit []viewmodels.HostServiceEdit, availableServic
 						</button>
 					</div>
 					<!-- Modal body -->
-					<form class="p-4 md:p-5" hx-post="/admin/hostservice/create" hx-target="this" hx-swap="outerHTML">
+					<form class="p-4 md:p-5" hx-post="/admin/hostservice/create" hx-target="#hostservices" hx-swap="outerHTML">
 						<div class="grid gap-4 mb-4 grid-cols-1">
 							<div class="col-span-1">
-								<label for="category" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
-								<select id="category" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+								<input type="hidden" id="host_id" name="host_id" value={ strconv.FormatInt(HostId, 10) }/>
+								<label for="service_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+								<select id="service_id" name="service_id" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
 									<option selected="">Select Service</option>
 									for _, service := range availableServices {
 										<option value={ strconv.FormatInt(service.ServiceId, 10) }>{ service.ServiceName }</option>
@@ -133,46 +134,6 @@ templ EditServicesForm(serviceEdit []viewmodels.HostServiceEdit, availableServic
 			</tbody>
 		</table>
 	</div>
-	<script>
-
-
-  document.body.addEventListener('htmx:afterOnLoad', function(evt) {
-    // Check if the modal is part of the newly loaded content
-
-	function closeModal(modalTarget) {
-		  document.getElementById(modalTarget).classList.add('hidden');
-		  document.getElementById(modalTarget).classList.remove('flex');
-	}
-	const modalTarget = "crud-modal";
-
-    const button = document.getElementById('add-service');
-    if (button) {
-      button.addEventListener('click', function(event) {
-        if (event.target.matches('[data-modal-toggle]')) {
-		  document.getElementById(modalTarget).classList.remove('hidden');
-		  document.getElementById(modalTarget).classList.add('flex');
-		  button.disabled = true;
-        }
-      });
-    }
-
-	const closeModel = document.getElementById('close-model');
-	if (closeModel) {
-		closeModel.addEventListener('click', function(event) {
-			closeModal(modalTarget);
-			button.disabled = false;
-		});
-	}
-
-	const submitService = document.getElementById('submit-service');
-	if (submitService) {
-		submitService.addEventListener('click', function(event) {
-			closeModal(modalTarget);
-			button.disabled = false;
-		});
-	}
-  });
-</script>
 }
 
 templ EditHostForm(host viewmodels.Host) {

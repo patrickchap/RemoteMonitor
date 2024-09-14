@@ -209,7 +209,7 @@ func (h *Handler) HostCreate(c echo.Context) error {
 }
 
 type GetHostServicesParams struct {
-	HostId int64 `param:"host_id"`
+	HostId int64 `param:"id"`
 }
 
 func (h *Handler) GetHostServices(c echo.Context) error {
@@ -242,7 +242,6 @@ func (h *Handler) GetHostServices(c echo.Context) error {
 		}
 	}
 
-	fmt.Printf(">>>>> availableService: %v", availableServices)
 	hostServiceModel := []viewmodels.HostServiceEdit{}
 
 	for _, hostService := range hostServices {
@@ -256,8 +255,74 @@ func (h *Handler) GetHostServices(c echo.Context) error {
 			ScheduleUnit:   hostService.ScheduleUnit.String,
 		})
 	}
+	fmt.Println("EditServicesForm")
+	fmt.Println(req.HostId)
 
-	return helpers.RenderTemplate(c, views.EditServicesForm(hostServiceModel, availableServices))
+	return helpers.RenderTemplate(c, views.EditServicesForm(hostServiceModel, availableServices, req.HostId))
+}
+
+type PostHostServiceParams struct {
+	HostId    int64 `form:"host_id"`
+	ServiceId int64 `form:"service_id"`
+}
+
+func (h *Handler) PostHostService(c echo.Context) error {
+	req := new(PostHostServiceParams)
+	if err := c.Bind(req); err != nil {
+		return c.String(http.StatusBadRequest, "Bad Request")
+	}
+
+	params := db.CreateHostServiceParams{
+		HostID:    sql.NullInt64{Int64: req.HostId, Valid: true},
+		ServiceID: sql.NullInt64{Int64: req.ServiceId, Valid: true},
+	}
+
+	_, err := h.Store.CreateHostService(c.Request().Context(), params)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	hostServices, err := h.Store.GetHostServices(c.Request().Context(), sql.NullInt64{Int64: req.HostId, Valid: true})
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	acitveService, err := h.Store.GetServices(c.Request().Context())
+
+	availableServices := []viewmodels.Service{}
+	for _, service := range acitveService {
+		found := false
+		for _, hostService := range hostServices {
+			if service.ID == hostService.ServiceID.Int64 {
+				found = true
+				break
+			}
+		}
+		if !found {
+			availableServices = append(availableServices, viewmodels.Service{
+				ServiceId:   service.ID,
+				ServiceName: service.ServiceName.String,
+			})
+		}
+	}
+
+	hostServiceModel := []viewmodels.HostServiceEdit{}
+
+	for _, hostService := range hostServices {
+		hostServiceModel = append(hostServiceModel, viewmodels.HostServiceEdit{
+			HostId:         hostService.HostID.Int64,
+			HostName:       hostService.HostName,
+			ServiceId:      hostService.ServiceID.Int64,
+			ServiceName:    hostService.ServiceName.String,
+			Active:         hostService.Active.Int64,
+			ScheduleNumber: hostService.ScheduleNumber.Int64,
+			ScheduleUnit:   hostService.ScheduleUnit.String,
+		})
+	}
+	fmt.Println("EditServicesForm")
+	fmt.Println(req.HostId)
+
+	return helpers.RenderTemplate(c, views.EditServicesForm(hostServiceModel, availableServices, req.HostId))
 }
 
 func (h *Handler) WsTest(c echo.Context) error {
