@@ -357,6 +357,35 @@ func (h *Handler) EditServiceRow(c echo.Context) error {
 	return helpers.RenderTemplate(c, component.EditServiceRow(hostServiceModel))
 }
 
+type GetServiceRowParams struct {
+	ServiceId int64 `param:"id"`
+}
+
+func (h *Handler) GetServiceRow(c echo.Context) error {
+	req := new(GetServiceRowParams)
+	if err := c.Bind(req); err != nil {
+		return c.String(http.StatusBadRequest, "Bad Request")
+	}
+
+	hostService, err := h.Store.GetHostService(c.Request().Context(), req.ServiceId)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	hostServiceModel := viewmodels.HostServiceEdit{
+		Id:             hostService.ID,
+		HostId:         hostService.HostID.Int64,
+		HostName:       hostService.HostName,
+		ServiceId:      hostService.ServiceID.Int64,
+		ServiceName:    hostService.ServiceName.String,
+		Active:         hostService.Active.Int64,
+		ScheduleNumber: hostService.ScheduleNumber.Int64,
+		ScheduleUnit:   hostService.ScheduleUnit.String,
+	}
+
+	return helpers.RenderTemplate(c, component.ServiceRow(hostServiceModel))
+}
+
 func (h *Handler) WsTest(c echo.Context) error {
 	return helpers.RenderTemplate(c, views.WebsocketClient())
 }
