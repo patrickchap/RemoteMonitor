@@ -38,6 +38,48 @@ func (q *Queries) CreateHostService(ctx context.Context, arg CreateHostServicePa
 	return i, err
 }
 
+const getHostService = `-- name: GetHostService :one
+SELECT hs.id, hs.host_id, hs.service_id, hs.active, hs.schedule_number, hs.schedule_unit, hs.last_check, hs.last_updated, hs.status, h.host_name, s.service_name
+FROM host_services as hs
+JOIN hosts as h ON hs.host_id = h.id
+JOIN services as s ON hs.service_id = s.id
+WHERE hs.id = ?
+AND hs.active = 1
+`
+
+type GetHostServiceRow struct {
+	ID             int64          `json:"id"`
+	HostID         sql.NullInt64  `json:"host_id"`
+	ServiceID      sql.NullInt64  `json:"service_id"`
+	Active         sql.NullInt64  `json:"active"`
+	ScheduleNumber sql.NullInt64  `json:"schedule_number"`
+	ScheduleUnit   sql.NullString `json:"schedule_unit"`
+	LastCheck      sql.NullTime   `json:"last_check"`
+	LastUpdated    sql.NullTime   `json:"last_updated"`
+	Status         sql.NullString `json:"status"`
+	HostName       string         `json:"host_name"`
+	ServiceName    sql.NullString `json:"service_name"`
+}
+
+func (q *Queries) GetHostService(ctx context.Context, id int64) (GetHostServiceRow, error) {
+	row := q.db.QueryRowContext(ctx, getHostService, id)
+	var i GetHostServiceRow
+	err := row.Scan(
+		&i.ID,
+		&i.HostID,
+		&i.ServiceID,
+		&i.Active,
+		&i.ScheduleNumber,
+		&i.ScheduleUnit,
+		&i.LastCheck,
+		&i.LastUpdated,
+		&i.Status,
+		&i.HostName,
+		&i.ServiceName,
+	)
+	return i, err
+}
+
 const getHostServices = `-- name: GetHostServices :many
 SELECT hs.id, hs.host_id, hs.service_id, hs.active, hs.schedule_number, hs.schedule_unit, hs.last_check, hs.last_updated, hs.status, h.host_name, s.service_name
 FROM host_services as hs

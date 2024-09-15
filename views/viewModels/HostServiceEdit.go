@@ -1,6 +1,7 @@
 package viewmodels
 
 type HostServiceEdit struct {
+	Id             int64  `json:"id"`
 	HostId         int64  `json:"host_id"`
 	HostName       string `json:"host_name"`
 	ServiceId      int64  `json:"service_id"`
