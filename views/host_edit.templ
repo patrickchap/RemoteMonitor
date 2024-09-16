@@ -58,7 +58,23 @@ templ HostEdit(id int64) {
 	}
 }
 
-templ EditServicesForm(serviceEdit []viewmodels.HostServiceEdit, availableServices []viewmodels.Service, HostId int64) {
+templ EmptyScripts() {
+	<script>
+	</script>
+}
+
+templ DeleteSuccessfullScirpt() {
+	<script>
+		Swal.fire({
+			title: 'Deleted!',
+			text: 'Service Deleted Successfully',
+			icon: 'success'
+			  });
+	</script>
+}
+
+templ EditServicesForm(serviceEdit []viewmodels.HostServiceEdit, availableServices []viewmodels.Service, HostId int64, scripts templ.Component) {
+	@scripts
 	<div id="hostservices" class="relative overflow-x-auto shadow-md sm:rounded-lg">
 		<!-- Modal toggle -->
 		<div class="w-full flex justify-end pb-2">

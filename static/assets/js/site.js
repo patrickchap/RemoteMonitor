@@ -48,3 +48,6 @@ document.body.addEventListener('htmx:afterOnLoad', (evt) => {
 
 });
 
+
+
+

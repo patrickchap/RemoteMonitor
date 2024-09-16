@@ -259,8 +259,8 @@ func (h *Handler) GetHostServices(c echo.Context) error {
 	}
 	fmt.Println("EditServicesForm")
 	fmt.Println(req.HostId)
-
-	return helpers.RenderTemplate(c, views.EditServicesForm(hostServiceModel, availableServices, req.HostId))
+	scripts := views.EmptyScripts()
+	return helpers.RenderTemplate(c, views.EditServicesForm(hostServiceModel, availableServices, req.HostId, scripts))
 }
 
 type PostHostServiceParams struct {
@@ -325,7 +325,8 @@ func (h *Handler) PostHostService(c echo.Context) error {
 	fmt.Println("EditServicesForm")
 	fmt.Println(req.HostId)
 
-	return helpers.RenderTemplate(c, views.EditServicesForm(hostServiceModel, availableServices, req.HostId))
+	scripts := views.EmptyScripts()
+	return helpers.RenderTemplate(c, views.EditServicesForm(hostServiceModel, availableServices, req.HostId, scripts))
 }
 
 type EditServiceRowParams struct {
@@ -384,6 +385,61 @@ func (h *Handler) GetServiceRow(c echo.Context) error {
 	}
 
 	return helpers.RenderTemplate(c, component.ServiceRow(hostServiceModel))
+}
+
+type GetDeleteServiceRowParams struct {
+	ServiceId int64 `param:"id"`
+}
+
+func (h *Handler) DeleteServiceRow(c echo.Context) error {
+	req := new(GetDeleteServiceRowParams)
+	if err := c.Bind(req); err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	deleted, _ := h.Store.DeleteHostService(c.Request().Context(), req.ServiceId)
+
+	hostServices, err := h.Store.GetHostServices(c.Request().Context(), deleted.HostID)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	acitveService, err := h.Store.GetServices(c.Request().Context())
+
+	availableServices := []viewmodels.Service{}
+	for _, service := range acitveService {
+		found := false
+		for _, hostService := range hostServices {
+			if service.ID == hostService.ServiceID.Int64 {
+				found = true
+				break
+			}
+		}
+		if !found {
+			availableServices = append(availableServices, viewmodels.Service{
+				ServiceId:   service.ID,
+				ServiceName: service.ServiceName.String,
+			})
+		}
+	}
+
+	hostServiceModel := []viewmodels.HostServiceEdit{}
+
+	for _, hostService := range hostServices {
+		hostServiceModel = append(hostServiceModel, viewmodels.HostServiceEdit{
+			Id:             hostService.ID,
+			HostId:         hostService.HostID.Int64,
+			HostName:       hostService.HostName,
+			ServiceId:      hostService.ServiceID.Int64,
+			ServiceName:    hostService.ServiceName.String,
+			Active:         hostService.Active.Int64,
+			ScheduleNumber: hostService.ScheduleNumber.Int64,
+			ScheduleUnit:   hostService.ScheduleUnit.String,
+		})
+	}
+
+	scripts := views.DeleteSuccessfullScirpt()
+	return helpers.RenderTemplate(c, views.EditServicesForm(hostServiceModel, availableServices, deleted.HostID.Int64, scripts))
 }
 
 func (h *Handler) WsTest(c echo.Context) error {

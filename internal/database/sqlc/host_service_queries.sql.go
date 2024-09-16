@@ -38,6 +38,30 @@ func (q *Queries) CreateHostService(ctx context.Context, arg CreateHostServicePa
 	return i, err
 }
 
+const deleteHostService = `-- name: DeleteHostService :one
+UPDATE host_services SET 
+    active = 0
+WHERE id = ?
+RETURNING id, host_id, service_id, active, schedule_number, schedule_unit, last_check, last_updated, status
+`
+
+func (q *Queries) DeleteHostService(ctx context.Context, id int64) (HostService, error) {
+	row := q.db.QueryRowContext(ctx, deleteHostService, id)
+	var i HostService
+	err := row.Scan(
+		&i.ID,
+		&i.HostID,
+		&i.ServiceID,
+		&i.Active,
+		&i.ScheduleNumber,
+		&i.ScheduleUnit,
+		&i.LastCheck,
+		&i.LastUpdated,
+		&i.Status,
+	)
+	return i, err
+}
+
 const getHostService = `-- name: GetHostService :one
 SELECT hs.id, hs.host_id, hs.service_id, hs.active, hs.schedule_number, hs.schedule_unit, hs.last_check, hs.last_updated, hs.status, h.host_name, s.service_name
 FROM host_services as hs

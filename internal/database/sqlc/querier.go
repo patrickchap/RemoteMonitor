@@ -12,6 +12,7 @@ import (
 type Querier interface {
 	CreateHost(ctx context.Context, arg CreateHostParams) (Host, error)
 	CreateHostService(ctx context.Context, arg CreateHostServiceParams) (HostService, error)
+	DeleteHostService(ctx context.Context, id int64) (HostService, error)
 	GetHost(ctx context.Context, id int64) (Host, error)
 	GetHostByHostname(ctx context.Context, hostName string) (Host, error)
 	GetHostService(ctx context.Context, id int64) (GetHostServiceRow, error)
