@@ -37,9 +37,19 @@ RETURNING *;
 
 
 -- name: GetHostsWithServices :many 
-SELECT h.id, h.host_name, hs.status, s.service_name
-FROM hosts h LEFT JOIN host_services AS hs 
-ON h.id = hs.host_id LEFT JOIN services AS s 
-ON hs.service_id = s.id
+SELECT
+  h.id,
+  h.host_name,
+  hs.status,
+  s.service_name,
+  hs.active,
+  h.active AS host_active
+FROM
+  hosts h
+  LEFT JOIN host_services AS hs ON h.id = hs.host_id
+  LEFT JOIN services AS s ON hs.service_id = s.id
+WHERE host_active = 1
+AND hs.active = 1
+AND h.active = 1
 Limit ?
 Offset ?;

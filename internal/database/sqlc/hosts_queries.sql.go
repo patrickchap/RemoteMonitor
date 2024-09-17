@@ -156,10 +156,20 @@ func (q *Queries) GetHosts(ctx context.Context, arg GetHostsParams) ([]Host, err
 }
 
 const getHostsWithServices = `-- name: GetHostsWithServices :many
-SELECT h.id, h.host_name, hs.status, s.service_name
-FROM hosts h LEFT JOIN host_services AS hs 
-ON h.id = hs.host_id LEFT JOIN services AS s 
-ON hs.service_id = s.id
+SELECT
+  h.id,
+  h.host_name,
+  hs.status,
+  s.service_name,
+  hs.active,
+  h.active AS host_active
+FROM
+  hosts h
+  LEFT JOIN host_services AS hs ON h.id = hs.host_id
+  LEFT JOIN services AS s ON hs.service_id = s.id
+WHERE host_active = 1
+AND hs.active = 1
+AND h.active = 1
 Limit ?
 Offset ?
 `
@@ -174,6 +184,8 @@ type GetHostsWithServicesRow struct {
 	HostName    string         `json:"host_name"`
 	Status      sql.NullString `json:"status"`
 	ServiceName sql.NullString `json:"service_name"`
+	Active      sql.NullInt64  `json:"active"`
+	HostActive  sql.NullInt64  `json:"host_active"`
 }
 
 func (q *Queries) GetHostsWithServices(ctx context.Context, arg GetHostsWithServicesParams) ([]GetHostsWithServicesRow, error) {
@@ -190,6 +202,8 @@ func (q *Queries) GetHostsWithServices(ctx context.Context, arg GetHostsWithServ
 			&i.HostName,
 			&i.Status,
 			&i.ServiceName,
+			&i.Active,
+			&i.HostActive,
 		); err != nil {
 			return nil, err
 		}

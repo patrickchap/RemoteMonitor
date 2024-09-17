@@ -279,10 +279,23 @@ func (h *Handler) PostHostService(c echo.Context) error {
 		ServiceID: sql.NullInt64{Int64: req.ServiceId, Valid: true},
 	}
 
-	_, err := h.Store.CreateHostService(c.Request().Context(), params)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	innactiveParams := db.GetInnactiveHostServiceByHostAndServiceParams{
+		HostID:    sql.NullInt64{Int64: req.HostId, Valid: true},
+		ServiceID: sql.NullInt64{Int64: req.ServiceId, Valid: true},
 	}
+
+	innactiveHostService, err := h.Store.GetInnactiveHostServiceByHostAndService(c.Request().Context(), innactiveParams)
+	if err != nil {
+		_, err = h.Store.CreateHostService(c.Request().Context(), params)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "Internal Server Error")
+		}
+	} else {
+		fmt.Printf("innactive host service: %v", innactiveHostService)
+		_, err = h.Store.ReactivateHostService(c.Request().Context(), innactiveHostService.ID)
+	}
+
+	fmt.Printf("innactive host service: %v", innactiveHostService)
 
 	hostServices, err := h.Store.GetHostServices(c.Request().Context(), sql.NullInt64{Int64: req.HostId, Valid: true})
 	if err != nil {
