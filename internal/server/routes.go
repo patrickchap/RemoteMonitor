@@ -118,6 +118,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	adminGroup.POST("/hostservice/create", handlers.PostHostService)
 	adminGroup.GET("/hostservice/edit/:id", handlers.EditServiceRow)
 	adminGroup.GET("/hostservice/edit/row/:id", handlers.GetServiceRow)
+	adminGroup.PUT("/hostservice/edit/row/:id", handlers.PutServiceRow)
 	adminGroup.DELETE("/hostservice/delete/:id", handlers.DeleteServiceRow)
 	return e
 }

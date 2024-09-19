@@ -32,6 +32,13 @@ UPDATE host_services SET
 WHERE id = ?
 RETURNING *;
 
+-- name: UpdteHostServiceSchedule :one
+UPDATE host_services SET 
+    schedule_number = ?,
+    schedule_unit = ?
+WHERE id = ?
+RETURNING *;
+
 -- name: GetInnactiveHostServiceByHostAndService :one
 SELECT hs.*, h.host_name, s.service_name
 FROM host_services as hs

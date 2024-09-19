@@ -247,14 +247,15 @@ func (h *Handler) GetHostServices(c echo.Context) error {
 
 	for _, hostService := range hostServices {
 		hostServiceModel = append(hostServiceModel, viewmodels.HostServiceEdit{
-			Id:             hostService.ID,
-			HostId:         hostService.HostID.Int64,
-			HostName:       hostService.HostName,
-			ServiceId:      hostService.ServiceID.Int64,
-			ServiceName:    hostService.ServiceName.String,
-			Active:         hostService.Active.Int64,
-			ScheduleNumber: hostService.ScheduleNumber.Int64,
-			ScheduleUnit:   hostService.ScheduleUnit.String,
+			Id:               hostService.ID,
+			HostId:           hostService.HostID.Int64,
+			HostName:         hostService.HostName,
+			ServiceId:        hostService.ServiceID.Int64,
+			ServiceName:      hostService.ServiceName.String,
+			Active:           hostService.Active.Int64,
+			ScheduleNumber:   hostService.ScheduleNumber.Int64,
+			ScheduleUnit:     hostService.ScheduleUnit.String,
+			FormatedSchedual: helpers.FormatSchedule(hostService.ScheduleNumber.Int64, hostService.ScheduleUnit.String),
 		})
 	}
 	fmt.Println("EditServicesForm")
@@ -325,14 +326,15 @@ func (h *Handler) PostHostService(c echo.Context) error {
 
 	for _, hostService := range hostServices {
 		hostServiceModel = append(hostServiceModel, viewmodels.HostServiceEdit{
-			Id:             hostService.ID,
-			HostId:         hostService.HostID.Int64,
-			HostName:       hostService.HostName,
-			ServiceId:      hostService.ServiceID.Int64,
-			ServiceName:    hostService.ServiceName.String,
-			Active:         hostService.Active.Int64,
-			ScheduleNumber: hostService.ScheduleNumber.Int64,
-			ScheduleUnit:   hostService.ScheduleUnit.String,
+			Id:               hostService.ID,
+			HostId:           hostService.HostID.Int64,
+			HostName:         hostService.HostName,
+			ServiceId:        hostService.ServiceID.Int64,
+			ServiceName:      hostService.ServiceName.String,
+			Active:           hostService.Active.Int64,
+			ScheduleNumber:   hostService.ScheduleNumber.Int64,
+			ScheduleUnit:     hostService.ScheduleUnit.String,
+			FormatedSchedual: helpers.FormatSchedule(hostService.ScheduleNumber.Int64, hostService.ScheduleUnit.String),
 		})
 	}
 	fmt.Println("EditServicesForm")
@@ -387,14 +389,58 @@ func (h *Handler) GetServiceRow(c echo.Context) error {
 	}
 
 	hostServiceModel := viewmodels.HostServiceEdit{
-		Id:             hostService.ID,
-		HostId:         hostService.HostID.Int64,
-		HostName:       hostService.HostName,
-		ServiceId:      hostService.ServiceID.Int64,
-		ServiceName:    hostService.ServiceName.String,
-		Active:         hostService.Active.Int64,
-		ScheduleNumber: hostService.ScheduleNumber.Int64,
-		ScheduleUnit:   hostService.ScheduleUnit.String,
+		Id:               hostService.ID,
+		HostId:           hostService.HostID.Int64,
+		HostName:         hostService.HostName,
+		ServiceId:        hostService.ServiceID.Int64,
+		ServiceName:      hostService.ServiceName.String,
+		Active:           hostService.Active.Int64,
+		ScheduleNumber:   hostService.ScheduleNumber.Int64,
+		ScheduleUnit:     hostService.ScheduleUnit.String,
+		FormatedSchedual: helpers.FormatSchedule(hostService.ScheduleNumber.Int64, hostService.ScheduleUnit.String),
+	}
+
+	return helpers.RenderTemplate(c, component.ServiceRow(hostServiceModel))
+}
+
+type PutServiceRowParams struct {
+	ServiceId      int64  `param:"id"`
+	ScheduleNumber int64  `form:"schedule_number"`
+	ScheduleUnit   string `form:"schedule_unit"`
+}
+
+func (h *Handler) PutServiceRow(c echo.Context) error {
+	req := new(PutServiceRowParams)
+	if err := c.Bind(req); err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	params := db.UpdteHostServiceScheduleParams{
+		ID:             req.ServiceId,
+		ScheduleNumber: sql.NullInt64{Int64: req.ScheduleNumber, Valid: true},
+		ScheduleUnit:   sql.NullString{String: req.ScheduleUnit, Valid: true},
+	}
+
+	_, err := h.Store.UpdteHostServiceSchedule(c.Request().Context(), params)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	hostService, err := h.Store.GetHostService(c.Request().Context(), req.ServiceId)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	hostServiceModel := viewmodels.HostServiceEdit{
+		Id:               hostService.ID,
+		HostId:           hostService.HostID.Int64,
+		HostName:         hostService.HostName,
+		ServiceId:        hostService.ServiceID.Int64,
+		ServiceName:      hostService.ServiceName.String,
+		Active:           hostService.Active.Int64,
+		ScheduleNumber:   hostService.ScheduleNumber.Int64,
+		ScheduleUnit:     hostService.ScheduleUnit.String,
+		FormatedSchedual: helpers.FormatSchedule(hostService.ScheduleNumber.Int64, hostService.ScheduleUnit.String),
 	}
 
 	return helpers.RenderTemplate(c, component.ServiceRow(hostServiceModel))
