@@ -17,12 +17,11 @@ var hostsEditBreadcrumb = map[string]string{
 	"Edit":  "",
 }
 
-templ HostEdit(id int64) {
+templ HostEdit(id int64, hostName string) {
 	@layouts.Base(HostsEditdHeader()) {
-		<h1>edit host with id: { strconv.FormatInt(id, 10) }</h1>
 		<div class="pt-20 px-6 bg-gray-200 dark:bg-background-dark h-full sm:ml-64">
 			@component.Breadcrumb(hostsEditBreadcrumb, "Edit")
-			<h1 class="text-xl text-gray-700 dark:text-gray-200 p-2 my-3 rounded-lg w-full font-semibold">Edit Host</h1>
+			<h1 class="text-xl text-gray-700 dark:text-gray-200 p-2 my-3 rounded-lg w-full font-semibold">Edit Host: { hostName }</h1>
 			<hr class="border-b dark:border-gray-700 w-full"/>
 			<div class="mb-4 border-b border-gray-200 dark:border-gray-700">
 				<ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-tab" data-tabs-toggle="#default-tab-content" role="tablist">
@@ -33,10 +32,19 @@ templ HostEdit(id int64) {
 						<button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="dashboard-tab" data-tabs-target="#dashboard" type="button" role="tab" aria-controls="dashboard" aria-selected="false">Services</button>
 					</li>
 					<li class="me-2" role="presentation">
-						<button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-tab" data-tabs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Schedule Logs</button>
+						<button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-tab" data-tabs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Service Logs</button>
 					</li>
-					<li role="presentation">
-						<button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="contacts-tab" data-tabs-target="#contacts" type="button" role="tab" aria-controls="contacts" aria-selected="false">Contacts</button>
+					<li class="me-2" role="presentation">
+						<button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-tab" data-tabs-target="#healthy" type="button" role="tab" aria-controls="healthy" aria-selected="false">Healthy Services</button>
+					</li>
+					<li class="me-2" role="presentation">
+						<button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-tab" data-tabs-target="#warning" type="button" role="tab" aria-controls="warning" aria-selected="false">Waring Services</button>
+					</li>
+					<li class="me-2" role="presentation">
+						<button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-tab" data-tabs-target="#problem" type="button" role="tab" aria-controls="problem" aria-selected="false">Problem Services</button>
+					</li>
+					<li class="me-2" role="presentation">
+						<button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300" id="settings-tab" data-tabs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="false">Pending Services</button>
 					</li>
 				</ul>
 			</div>
@@ -50,8 +58,17 @@ templ HostEdit(id int64) {
 				<div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="settings" role="tabpanel" aria-labelledby="settings-tab">
 					<p class="text-sm text-gray-500 dark:text-gray-400">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Settings tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
 				</div>
-				<div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="contacts" role="tabpanel" aria-labelledby="contacts-tab">
-					<p class="text-sm text-gray-500 dark:text-gray-400">This is some placeholder content the <strong class="font-medium text-gray-800 dark:text-white">Contacts tab's associated content</strong>. Clicking another tab will toggle the visibility of this one for the next. The tab JavaScript swaps classes to control the content visibility and styling.</p>
+				<div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="healthy" role="tabpanel" aria-labelledby="settings-tab">
+					<p class="text-sm text-gray-500 dark:text-gray-400">heathly services</p>
+				</div>
+				<div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="warning" role="tabpanel" aria-labelledby="settings-tab">
+					<p class="text-sm text-gray-500 dark:text-gray-400">warning services</p>
+				</div>
+				<div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="problem" role="tabpanel" aria-labelledby="settings-tab">
+					<p class="text-sm text-gray-500 dark:text-gray-400">problem services</p>
+				</div>
+				<div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="pending" role="tabpanel" aria-labelledby="settings-tab">
+					<p class="text-sm text-gray-500 dark:text-gray-400">pending services</p>
 				</div>
 			</div>
 		</div>

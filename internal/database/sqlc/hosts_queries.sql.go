@@ -170,6 +170,7 @@ FROM
 WHERE host_active = 1
 AND hs.active = 1
 AND h.active = 1
+ORDER BY h.host_name
 Limit ?
 Offset ?
 `

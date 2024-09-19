@@ -103,7 +103,12 @@ func (h *Handler) HostEdit(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Bad Request")
 	}
 
-	return helpers.RenderTemplate(c, views.HostEdit(req.Id))
+	host, err := h.Store.GetHost(c.Request().Context(), req.Id)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+
+	return helpers.RenderTemplate(c, views.HostEdit(req.Id, host.HostName))
 }
 
 type HostEditFormParams struct {
