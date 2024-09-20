@@ -1,5 +1,9 @@
 package config
 
+import (
+	"github.com/robfig/cron/v3"
+)
+
 type AppConfig struct {
-	// Server configuration
+	Schedual *cron.Cron
 }

@@ -1,13 +1,16 @@
 package main
 
 import (
+	"RemoteMonitor/config"
 	database "RemoteMonitor/internal/database/sqlc"
 	"RemoteMonitor/internal/server"
 	"database/sql"
 	"fmt"
 	"log"
 	"os"
+	"time"
 
+	"github.com/robfig/cron/v3"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
@@ -24,7 +27,20 @@ func main() {
 
 	store := database.NewStore(sqlDb)
 
-	server := server.NewServer(store)
+	appConfig := &config.AppConfig{}
+	timezone, err := time.LoadLocation("Local")
+	if err != nil {
+		panic(fmt.Sprintf("cannot load location: %s", err))
+	}
+
+	scheduler := cron.New(cron.WithLocation(timezone), cron.WithChain(
+		cron.DelayIfStillRunning(cron.DefaultLogger),
+		cron.Recover(cron.DefaultLogger),
+	))
+
+	appConfig.Schedual = scheduler
+
+	server := server.NewServer(store, appConfig)
 
 	err = server.ListenAndServe()
 	if err != nil {

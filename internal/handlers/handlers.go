@@ -12,14 +12,16 @@ import (
 	"strconv"
 	"time"
 
+	"RemoteMonitor/config"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 )
 
 type Handler struct {
-	Store   db.Store
-	Manager *manager
+	Store     db.Store
+	Manager   *manager
+	AppConfig *config.AppConfig
 }
 
 type manager struct {

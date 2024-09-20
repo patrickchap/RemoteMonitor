@@ -9,15 +9,7 @@ templ WebsocketClient() {
 		<body>
 			<p id="output"></p>
 			<script>
-		var loc = window.location;
-		var uri = 'ws:';
-
-		if (loc.protocol === 'https:') {
-		  uri = 'wss:';
-		}
-		uri += '//' + loc.host;
-		uri += loc.pathname + 'ws';
-
+		console.log('Starting WebSocket Client')
 		ws = new WebSocket("ws://localhost:8080/ws")
 
 		ws.onopen = function() {
@@ -29,9 +21,6 @@ templ WebsocketClient() {
 		  out.innerHTML += evt.data + '<br>';
 		}
 
-		setInterval(function() {
-		  ws.send('Hello, Server!');
-		}, 1000);
 	  </script>
 		</body>
 	</html>
