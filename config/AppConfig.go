@@ -5,5 +5,6 @@ import (
 )
 
 type AppConfig struct {
-	Schedual *cron.Cron
+	Schedual    *cron.Cron
+	SchedualIds map[int64]cron.EntryID
 }

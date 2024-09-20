@@ -40,6 +40,7 @@ func (h *Handler) Monitor() {
 			fmt.Printf("Error adding job: %v", err)
 		}
 		fmt.Printf("Job added: %v", scheduleId)
+		h.AppConfig.SchedualIds[hostService.ID] = scheduleId
 
 		payload := make(map[string]string)
 		payload["message"] = "scheduling"

@@ -390,6 +390,8 @@ func (h *Handler) GetServiceRow(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Bad Request")
 	}
 
+	fmt.Println("GetServiceRow><>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>")
+
 	hostService, err := h.Store.GetHostService(c.Request().Context(), req.ServiceId)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "Internal Server Error")
@@ -437,6 +439,25 @@ func (h *Handler) PutServiceRow(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "Internal Server Error")
 	}
+	fmt.Printf("alsjdfladjfladfaslfda;sdf %v", hostService)
+	//update the schedule
+	fmt.Printf("<<<<<<<>>>>>>>>>><<<<<<<<>>>>>>Removing job: %v", h.AppConfig.SchedualIds[req.ServiceId])
+	h.AppConfig.Schedual.Remove(h.AppConfig.SchedualIds[req.ServiceId])
+	spec := fmt.Sprintf("@every %d%s", hostService.ScheduleNumber.Int64, hostService.ScheduleUnit.String)
+
+	var job Job
+	job.HostServiceId = hostService.ID
+	scheduleId, err := h.AppConfig.Schedual.AddJob(spec, &job)
+	if err != nil {
+		fmt.Printf("Error adding job: %v", err)
+	}
+	fmt.Printf("Job added: %v", scheduleId)
+	h.AppConfig.SchedualIds[hostService.ID] = scheduleId
+
+	payload := make(map[string]string)
+	payload["message"] = "scheduling"
+	payload["host_service_id"] = strconv.FormatInt(hostService.ID, 10)
+	SendEvent("update-schedule", payload)
 
 	hostServiceModel := viewmodels.HostServiceEdit{
 		Id:               hostService.ID,

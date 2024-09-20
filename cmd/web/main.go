@@ -39,7 +39,7 @@ func main() {
 	))
 
 	appConfig.Schedual = scheduler
-
+	appConfig.SchedualIds = make(map[int64]cron.EntryID)
 	server := server.NewServer(store, appConfig)
 
 	err = server.ListenAndServe()
