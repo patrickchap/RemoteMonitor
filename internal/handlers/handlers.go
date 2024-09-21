@@ -447,6 +447,7 @@ func (h *Handler) PutServiceRow(c echo.Context) error {
 
 	var job Job
 	job.HostServiceId = hostService.ID
+	job.Handler = h
 	scheduleId, err := h.AppConfig.Schedual.AddJob(spec, &job)
 	if err != nil {
 		fmt.Printf("Error adding job: %v", err)

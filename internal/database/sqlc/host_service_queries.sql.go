@@ -63,7 +63,7 @@ func (q *Queries) DeleteHostService(ctx context.Context, id int64) (HostService,
 }
 
 const getHostService = `-- name: GetHostService :one
-SELECT hs.id, hs.host_id, hs.service_id, hs.active, hs.schedule_number, hs.schedule_unit, hs.last_check, hs.last_updated, hs.status, h.host_name, s.service_name
+SELECT hs.id, hs.host_id, hs.service_id, hs.active, hs.schedule_number, hs.schedule_unit, hs.last_check, hs.last_updated, hs.status, h.host_name, h.url, s.service_name
 FROM host_services as hs
 JOIN hosts as h ON hs.host_id = h.id
 JOIN services as s ON hs.service_id = s.id
@@ -82,6 +82,7 @@ type GetHostServiceRow struct {
 	LastUpdated    sql.NullTime   `json:"last_updated"`
 	Status         sql.NullString `json:"status"`
 	HostName       string         `json:"host_name"`
+	Url            sql.NullString `json:"url"`
 	ServiceName    sql.NullString `json:"service_name"`
 }
 
@@ -99,6 +100,7 @@ func (q *Queries) GetHostService(ctx context.Context, id int64) (GetHostServiceR
 		&i.LastUpdated,
 		&i.Status,
 		&i.HostName,
+		&i.Url,
 		&i.ServiceName,
 	)
 	return i, err
