@@ -2,13 +2,13 @@ package component
 
 import "strconv"
 
-templ Card(service string, value int, className string, fontClassNames string, icon templ.Component) {
+templ Card(service string, value int64, className string, fontClassNames string, icon templ.Component) {
 	<a href="#" class={ "block md:w-full p-6 border rounded-lg shadow", className }>
 		<div class="flex items-center" data-id="4">
 			@icon
 			<div data-id="6">
 				<h2 class={ "text-2xl font-bold tracking-tight", fontClassNames } data-id="7">{ service }</h2>
-				<p class={ "text-3xl font-bold", fontClassNames } data-id="8">{ strconv.Itoa(value) }</p>
+				<p class={ "text-3xl font-bold", fontClassNames } data-id="8">{ strconv.FormatInt(value, 10) }</p>
 			</div>
 		</div>
 	</a>

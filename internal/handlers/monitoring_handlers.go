@@ -39,8 +39,11 @@ func (h *Handler) CheckHostService(hostServiceId int64) {
 	fmt.Printf("Message: %v\n", message)
 	fmt.Printf("Status: %v\n", status)
 	fmt.Printf("Checking host service: %v\n", hostService)
+	//TODO: Send  message
+	//SendEvent("host-channel", message)
 }
 
+// TODO: update return type in order to send event types to different channels
 func CheckHttpService(url string) (string, string) {
 	if strings.HasSuffix(url, "/") {
 		url = strings.TrimSuffix(url, "/")
@@ -65,6 +68,8 @@ func CheckHttpService(url string) (string, string) {
 
 	return fmt.Sprintf("%s - %s", url, resp.Status), "healthy"
 }
+
+//TODO: Stop monitorying
 
 func (h *Handler) Monitor() {
 

@@ -86,6 +86,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 			c.Echo().Reverse("/"))
 	})
 
+	//TODO: start monitorying based on value from database.. slinder UI
 	go handlers.Monitor()
 	handlers.AppConfig.Schedual.Start()
 

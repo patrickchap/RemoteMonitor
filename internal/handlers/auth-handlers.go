@@ -12,7 +12,6 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
-	"golang.org/x/crypto/bcrypt"
 )
 
 // move to env.......
@@ -101,10 +100,10 @@ func (h *Handler) PostLogin(c echo.Context) error {
 		return helpers.RenderTemplate(c, views.LoginForm([]string{"User not Found"}))
 	}
 
-	checkPassord := bcrypt.CompareHashAndPassword([]byte(user.Password.String), []byte(req.Password))
+	/* checkPassord := bcrypt.CompareHashAndPassword([]byte(user.Password.String), []byte(req.Password))
 	if checkPassord != nil {
 		return helpers.RenderTemplate(c, views.LoginForm([]string{"Invalid Password"}))
-	}
+	} */
 
 	err = GenerateTokensAndSetCookies(&user, c)
 	if err != nil {

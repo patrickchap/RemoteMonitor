@@ -17,6 +17,8 @@ type Querier interface {
 	GetHostByHostname(ctx context.Context, hostName string) (Host, error)
 	GetHostService(ctx context.Context, id int64) (GetHostServiceRow, error)
 	GetHostServices(ctx context.Context, hostID sql.NullInt64) ([]GetHostServicesRow, error)
+	GetHostServicesByStatus(ctx context.Context, status sql.NullString) ([]GetHostServicesByStatusRow, error)
+	GetHostServicesStatuses(ctx context.Context) (GetHostServicesStatusesRow, error)
 	GetHosts(ctx context.Context, arg GetHostsParams) ([]Host, error)
 	GetHostsServicesToMonitor(ctx context.Context) ([]GetHostsServicesToMonitorRow, error)
 	GetHostsWithServices(ctx context.Context, arg GetHostsWithServicesParams) ([]GetHostsWithServicesRow, error)

@@ -40,14 +40,27 @@ func GetUnitValue(schedualUnit string) int {
 	return unit
 }
 
+templ GetStatus(status string) {
+	switch status {
+		case "pending":
+			<span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">Pending</span>
+		case "healthy":
+			<span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Healthy</span>
+		case "problem":
+			<span class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Problem</span>
+		case "warning":
+			<span class="bg-yellow-100 text-yellow-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Warning</span>
+	}
+}
+
 var SchedualUnits = []string{"s", "m", "mon"}
 
 //{ fmt.Sprintf("/admin/hostservice/edit/row/%d", service.Id) }
 templ EditServiceRow(service viewmodels.HostServiceEdit) {
 	<tr class="odd:bg-white odd:dark:bg-background-dark even:bg-gray-50 even:dark:bg-surface-dark border-b dark:border-gray-700 editing" hx-trigger="cancel" hx-get={ fmt.Sprintf("/admin/hostservice/edit/row/%d", service.Id) }>
-		<th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+		<td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
 			{ service.ServiceName }
-		</th>
+		</td>
 		<td class="px-6 py-4 flex">
 			<select
 				id="schedule_unit_select"
@@ -73,6 +86,7 @@ templ EditServiceRow(service viewmodels.HostServiceEdit) {
 				}
 			</select>
 		</td>
+		<td class="px-6 py-4"></td>
 		<td class="px-6 py-4"></td>
 		<td class="px-6 py-4">
 			<button class="btn danger px-2" hx-get={ fmt.Sprintf("/admin/hostservice/edit/row/%d", service.Id) }>
@@ -128,6 +142,9 @@ templ ServiceRow(service viewmodels.HostServiceEdit) {
 			{ service.ServiceName }
 		</th>
 		<td class="px-6 py-4">{ service.FormatedSchedual }</td>
+		<td class="px-6 py-4">
+			@GetStatus(service.Status)
+		</td>
 		<td class="px-6 py-4">
 			<a
 				class="cursor-pointer"

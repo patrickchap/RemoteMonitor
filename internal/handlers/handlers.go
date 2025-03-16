@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"RemoteMonitor/config"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 )
@@ -42,14 +41,6 @@ type getHostParams struct {
 }
 
 func (h *Handler) Dashboard(c echo.Context) error {
-
-	u, ok := c.Get("user").(*jwt.Token)
-	if !ok {
-		return c.String(http.StatusInternalServerError, "internal server error")
-	}
-
-	fmt.Printf(">>>>>>> user: %v", u)
-
 	req := new(getHostParams)
 	if err := c.Bind(req); err != nil {
 		return c.String(http.StatusBadRequest, "bad request")
@@ -64,12 +55,16 @@ func (h *Handler) Dashboard(c echo.Context) error {
 		Offset: req.Offset,
 	}
 
+	statuses, err := h.Store.GetHostServicesStatuses(c.Request().Context())
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "internal server error")
+	}
 	hosts, err := h.Store.GetHostsWithServices(c.Request().Context(), params)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "internal server error")
 	}
 
-	return helpers.RenderTemplate(c, views.Home(hosts))
+	return helpers.RenderTemplate(c, views.Home(hosts, statuses))
 }
 
 func (h *Handler) Hosts(c echo.Context) error {
@@ -263,10 +258,9 @@ func (h *Handler) GetHostServices(c echo.Context) error {
 			ScheduleNumber:   hostService.ScheduleNumber.Int64,
 			ScheduleUnit:     hostService.ScheduleUnit.String,
 			FormatedSchedual: helpers.FormatSchedule(hostService.ScheduleNumber.Int64, hostService.ScheduleUnit.String),
+			Status:           hostService.Status.String,
 		})
 	}
-	fmt.Println("EditServicesForm")
-	fmt.Println(req.HostId)
 	scripts := views.EmptyScripts()
 	return helpers.RenderTemplate(c, views.EditServicesForm(hostServiceModel, availableServices, req.HostId, scripts))
 }
@@ -342,6 +336,7 @@ func (h *Handler) PostHostService(c echo.Context) error {
 			ScheduleNumber:   hostService.ScheduleNumber.Int64,
 			ScheduleUnit:     hostService.ScheduleUnit.String,
 			FormatedSchedual: helpers.FormatSchedule(hostService.ScheduleNumber.Int64, hostService.ScheduleUnit.String),
+			Status:           hostService.Status.String,
 		})
 	}
 	fmt.Println("EditServicesForm")
@@ -375,6 +370,7 @@ func (h *Handler) EditServiceRow(c echo.Context) error {
 		Active:         hostService.Active.Int64,
 		ScheduleNumber: hostService.ScheduleNumber.Int64,
 		ScheduleUnit:   hostService.ScheduleUnit.String,
+		Status:         hostService.Status.String,
 	}
 
 	return helpers.RenderTemplate(c, component.EditServiceRow(hostServiceModel))
@@ -389,8 +385,6 @@ func (h *Handler) GetServiceRow(c echo.Context) error {
 	if err := c.Bind(req); err != nil {
 		return c.String(http.StatusBadRequest, "Bad Request")
 	}
-
-	fmt.Println("GetServiceRow><>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>")
 
 	hostService, err := h.Store.GetHostService(c.Request().Context(), req.ServiceId)
 	if err != nil {
@@ -407,6 +401,7 @@ func (h *Handler) GetServiceRow(c echo.Context) error {
 		ScheduleNumber:   hostService.ScheduleNumber.Int64,
 		ScheduleUnit:     hostService.ScheduleUnit.String,
 		FormatedSchedual: helpers.FormatSchedule(hostService.ScheduleNumber.Int64, hostService.ScheduleUnit.String),
+		Status:           hostService.Status.String,
 	}
 
 	return helpers.RenderTemplate(c, component.ServiceRow(hostServiceModel))
@@ -439,9 +434,7 @@ func (h *Handler) PutServiceRow(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "Internal Server Error")
 	}
-	fmt.Printf("alsjdfladjfladfaslfda;sdf %v", hostService)
 	//update the schedule
-	fmt.Printf("<<<<<<<>>>>>>>>>><<<<<<<<>>>>>>Removing job: %v", h.AppConfig.SchedualIds[req.ServiceId])
 	h.AppConfig.Schedual.Remove(h.AppConfig.SchedualIds[req.ServiceId])
 	spec := fmt.Sprintf("@every %d%s", hostService.ScheduleNumber.Int64, hostService.ScheduleUnit.String)
 
@@ -452,13 +445,12 @@ func (h *Handler) PutServiceRow(c echo.Context) error {
 	if err != nil {
 		fmt.Printf("Error adding job: %v", err)
 	}
-	fmt.Printf("Job added: %v", scheduleId)
 	h.AppConfig.SchedualIds[hostService.ID] = scheduleId
 
 	payload := make(map[string]string)
 	payload["message"] = "scheduling"
 	payload["host_service_id"] = strconv.FormatInt(hostService.ID, 10)
-	SendEvent("update-schedule", payload)
+	go SendEvent("update-schedule", payload)
 
 	hostServiceModel := viewmodels.HostServiceEdit{
 		Id:               hostService.ID,
@@ -470,6 +462,7 @@ func (h *Handler) PutServiceRow(c echo.Context) error {
 		ScheduleNumber:   hostService.ScheduleNumber.Int64,
 		ScheduleUnit:     hostService.ScheduleUnit.String,
 		FormatedSchedual: helpers.FormatSchedule(hostService.ScheduleNumber.Int64, hostService.ScheduleUnit.String),
+		Status:           hostService.Status.String,
 	}
 
 	return helpers.RenderTemplate(c, component.ServiceRow(hostServiceModel))
@@ -523,11 +516,31 @@ func (h *Handler) DeleteServiceRow(c echo.Context) error {
 			Active:         hostService.Active.Int64,
 			ScheduleNumber: hostService.ScheduleNumber.Int64,
 			ScheduleUnit:   hostService.ScheduleUnit.String,
+			Status:         hostService.Status.String,
 		})
 	}
 
 	scripts := views.DeleteSuccessfullScirpt()
 	return helpers.RenderTemplate(c, views.EditServicesForm(hostServiceModel, availableServices, deleted.HostID.Int64, scripts))
+}
+
+type GetHostserviceByStatusParams struct {
+	Status string `param:"status"`
+}
+
+func (h *Handler) GetHostserviceByStatus(c echo.Context) error {
+	req := new(GetHostserviceByStatusParams)
+	if err := c.Bind(req); err != nil {
+		return c.String(http.StatusBadRequest, "Bad Request")
+	}
+
+	hostServices, err := h.Store.GetHostServicesByStatus(c.Request().Context(), sql.NullString{String: req.Status, Valid: true})
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+	fmt.Println(hostServices)
+
+	return nil
 }
 
 func (h *Handler) WsTest(c echo.Context) error {

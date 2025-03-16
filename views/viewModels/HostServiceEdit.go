@@ -10,6 +10,7 @@ type HostServiceEdit struct {
 	ScheduleNumber   int64  `json:"schedule_number"`
 	ScheduleUnit     string `json:"schedule_unit"`
 	FormatedSchedual string `json:"formated_schedual"`
+	Status           string `json:"status"`
 }
 
 type Service struct {
