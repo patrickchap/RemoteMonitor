@@ -11,7 +11,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/websocket"
-	"github.com/labstack/echo-jwt/v4"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -87,8 +87,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 	})
 
 	//TODO: start monitorying based on value from database.. slinder UI
-	go handlers.Monitor()
-	handlers.AppConfig.Schedual.Start()
+	handlers.AppConfig.SetShouldMonitor(true)
+	if handlers.AppConfig.GetShouldMonitor() {
+		go handlers.Monitor()
+		handlers.AppConfig.Schedual.Start()
+	}
 
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -122,6 +125,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 		},
 	}))
 	adminGroup.Use(hd.TokenRefresherMiddleware)
+
+	// Add monitoring toggle route
+	adminGroup.POST("/monitor/toggle", handlers.ToggleMonitor)
+
 	adminGroup.GET("/", func(c echo.Context) error {
 
 		hd.SendEvent("exampleEvent", MyStruct{Name: "John", Status: "Offline"})

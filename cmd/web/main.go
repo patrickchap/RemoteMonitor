@@ -28,6 +28,8 @@ func main() {
 	store := database.NewStore(sqlDb)
 
 	appConfig := &config.AppConfig{}
+	// TODO: get from database
+	appConfig.SetShouldMonitor(false)
 	timezone, err := time.LoadLocation("Local")
 	if err != nil {
 		panic(fmt.Sprintf("cannot load location: %s", err))

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/labstack/echo/v4"
 )
 
 type Job struct {
@@ -69,7 +70,11 @@ func CheckHttpService(url string) (string, string) {
 	return fmt.Sprintf("%s - %s", url, resp.Status), "healthy"
 }
 
-//TODO: Stop monitorying
+// TODO: Stop monitorying
+func (h *Handler) StopMonitor() {
+	fmt.Println("Stopping monitor")
+
+}
 
 func (h *Handler) Monitor() {
 
@@ -117,4 +122,21 @@ var (
 
 func SendEvent(name string, data interface{}) {
 	EventChannel <- Event{Name: name, Data: data}
+}
+
+func (h *Handler) ToggleMonitor(c echo.Context) error {
+	currentState := !h.AppConfig.GetShouldMonitor()
+	h.AppConfig.SetShouldMonitor(currentState)
+
+	if !currentState {
+		// Starting monitoring
+		fmt.Println("Starting monitoring toogle")
+		h.AppConfig.Schedual.Start()
+	} else {
+		// Stopping monitoring
+		fmt.Println("Stopping monitoring toogle")
+		h.AppConfig.Schedual.Stop()
+	}
+
+	return c.JSON(http.StatusOK, map[string]bool{"monitoring": !currentState})
 }
