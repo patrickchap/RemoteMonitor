@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"RemoteMonitor/config"
+
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 )
@@ -86,8 +87,21 @@ func (h *Handler) Hosts(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "internal server error")
 	}
+	//Group hosts by host_name and have a list of services
+	hostsMap := make(map[string]*db.HostTable)
+	for _, host := range hosts {
+		_, exists := hostsMap[host.HostName]
+		if !exists {
+			hostsMap[host.HostName] = &db.HostTable{
+				ID:       host.ID,
+				HostName: host.HostName,
+				Services: []string{},
+			}
+		}
+		hostsMap[host.HostName].Services = append(hostsMap[host.HostName].Services, host.ServiceName.String)
+	}
 
-	return helpers.RenderTemplate(c, views.Hosts(hosts))
+	return helpers.RenderTemplate(c, views.HostsTwo(hostsMap))
 }
 
 type HostEditParams struct {

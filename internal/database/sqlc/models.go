@@ -53,3 +53,11 @@ type User struct {
 	CreatedAt   sql.NullTime   `json:"created_at"`
 	UpdatedAt   sql.NullTime   `json:"updated_at"`
 }
+
+type HostTable struct {
+	ID          int64          `json:"id"`
+	HostName    string         `json:"host_name"`
+	Services    []string       `json:"services"`
+	Active      sql.NullInt64  `json:"active"`
+	HostActive  sql.NullInt64  `json:"host_active"`
+}
