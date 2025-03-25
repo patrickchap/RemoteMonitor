@@ -128,6 +128,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	// Add monitoring toggle route
 	adminGroup.POST("/monitor/toggle", handlers.ToggleMonitor)
+	adminGroup.GET("/monitor/state", handlers.GetMonitorState)
 
 	adminGroup.GET("/", func(c echo.Context) error {
 

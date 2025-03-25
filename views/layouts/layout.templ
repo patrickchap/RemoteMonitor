@@ -88,27 +88,26 @@ templ Base(headers templ.Component) {
 			<script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
 			<script type="module" src="/assets/js/site.js"></script>
 			<script>
-				// Initialize monitor toggle state
-				document.addEventListener('DOMContentLoaded', function() {
-					const toggle = document.getElementById('monitor-toggle');
-					if (toggle) {
-						// Make initial request to get state
-						fetch('/admin/monitor/toggle')
-							.then(response => response.json())
-							.then(data => {
-								toggle.checked = data.monitoring;
-							})
-							.catch(console.error);
-					}
-				});
 
+				// On load, get monitor state
+				document.addEventListener('DOMContentLoaded', function() {
+					fetch('/admin/monitor/state')
+						.then(response => response.json())
+						.then(data => {
+							console.log(data);
+							document.getElementById('monitor-toggle').checked = data.monitoring;
+						})
+				});	
 				// Listen for successful toggle
 				document.body.addEventListener('htmx:afterRequest', function(evt) {
 					if (evt.detail.pathInfo.requestPath === '/admin/monitor/toggle') {
 						const response = JSON.parse(evt.detail.xhr.response);
 						document.getElementById('monitor-toggle').checked = response.monitoring;
+					
 					}
 				});
+
+				
 			</script>
 		</body>
 	</html>

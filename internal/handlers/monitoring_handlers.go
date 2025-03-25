@@ -127,8 +127,8 @@ func SendEvent(name string, data interface{}) {
 func (h *Handler) ToggleMonitor(c echo.Context) error {
 	currentState := !h.AppConfig.GetShouldMonitor()
 	h.AppConfig.SetShouldMonitor(currentState)
-
-	if !currentState {
+	fmt.Printf("Current state: %v\n", currentState)
+	if currentState {
 		// Starting monitoring
 		fmt.Println("Starting monitoring toogle")
 		h.AppConfig.Schedual.Start()
@@ -138,5 +138,11 @@ func (h *Handler) ToggleMonitor(c echo.Context) error {
 		h.AppConfig.Schedual.Stop()
 	}
 
-	return c.JSON(http.StatusOK, map[string]bool{"monitoring": !currentState})
+	return c.JSON(http.StatusOK, map[string]bool{"monitoring": currentState})
+}
+
+func (h *Handler) GetMonitorState(c echo.Context) error {
+	currentState := h.AppConfig.GetShouldMonitor()
+	fmt.Printf("Current state: %v\n", currentState)
+	return c.JSON(http.StatusOK, map[string]bool{"monitoring": currentState})
 }
