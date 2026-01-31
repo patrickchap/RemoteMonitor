@@ -408,3 +408,33 @@ func (q *Queries) UpdteHostServiceSchedule(ctx context.Context, arg UpdteHostSer
 	)
 	return i, err
 }
+
+const updateHostServiceStatus = `-- name: UpdateHostServiceStatus :one
+UPDATE host_services SET
+    status = ?,
+    last_check = CURRENT_TIMESTAMP
+WHERE id = ?
+RETURNING id, host_id, service_id, active, schedule_number, schedule_unit, last_check, last_updated, status
+`
+
+type UpdateHostServiceStatusParams struct {
+	Status sql.NullString `json:"status"`
+	ID     int64          `json:"id"`
+}
+
+func (q *Queries) UpdateHostServiceStatus(ctx context.Context, arg UpdateHostServiceStatusParams) (HostService, error) {
+	row := q.db.QueryRowContext(ctx, updateHostServiceStatus, arg.Status, arg.ID)
+	var i HostService
+	err := row.Scan(
+		&i.ID,
+		&i.HostID,
+		&i.ServiceID,
+		&i.Active,
+		&i.ScheduleNumber,
+		&i.ScheduleUnit,
+		&i.LastCheck,
+		&i.LastUpdated,
+		&i.Status,
+	)
+	return i, err
+}

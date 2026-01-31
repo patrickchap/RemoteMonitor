@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"net/http"
+	"sync"
 
 	"fmt"
 
@@ -17,7 +18,8 @@ import (
 )
 
 var (
-	upgrader = websocket.Upgrader{}
+	upgrader       = websocket.Upgrader{}
+	broadcastOnce  sync.Once
 )
 
 func BroadcastEvents() {
@@ -53,8 +55,10 @@ func handleWebSocket(c echo.Context) error {
 		hd.WsMutex.Unlock()
 	}()
 
-	// Start the broadcastEvents goroutine once
-	go BroadcastEvents()
+	// Start the broadcastEvents goroutine once (only first connection triggers this)
+	broadcastOnce.Do(func() {
+		go BroadcastEvents()
+	})
 
 	for {
 		_, _, err := ws.ReadMessage()

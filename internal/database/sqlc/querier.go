@@ -28,6 +28,7 @@ type Querier interface {
 	GetUserForAuth(ctx context.Context, email sql.NullString) (GetUserForAuthRow, error)
 	ReactivateHostService(ctx context.Context, id int64) (HostService, error)
 	UpdateHost(ctx context.Context, arg UpdateHostParams) (Host, error)
+	UpdateHostServiceStatus(ctx context.Context, arg UpdateHostServiceStatusParams) (HostService, error)
 	UpdteHostServiceSchedule(ctx context.Context, arg UpdteHostServiceScheduleParams) (HostService, error)
 }
 

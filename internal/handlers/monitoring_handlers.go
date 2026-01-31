@@ -2,12 +2,15 @@ package handlers
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	database "RemoteMonitor/internal/database/sqlc"
 
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
@@ -23,12 +26,20 @@ func (j *Job) Run() {
 	j.Handler.CheckHostService(j.HostServiceId)
 }
 
+type HostServiceStatusPayload struct {
+	HostServiceId int64  `json:"host_service_id"`
+	Status        string `json:"status"`
+	Message       string `json:"message"`
+	LastCheck     string `json:"last_check"`
+}
+
 func (h *Handler) CheckHostService(hostServiceId int64) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 	hostService, err := h.Store.GetHostService(ctx, hostServiceId)
 	if err != nil {
 		fmt.Printf("Error getting host service: %v", err)
+		return
 	}
 
 	var message, status string
@@ -40,8 +51,26 @@ func (h *Handler) CheckHostService(hostServiceId int64) {
 	fmt.Printf("Message: %v\n", message)
 	fmt.Printf("Status: %v\n", status)
 	fmt.Printf("Checking host service: %v\n", hostService)
-	//TODO: Send  message
-	//SendEvent("host-channel", message)
+
+	// Persist the status to the database
+	updateCtx, updateCancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer updateCancel()
+	_, err = h.Store.UpdateHostServiceStatus(updateCtx, database.UpdateHostServiceStatusParams{
+		Status: sql.NullString{String: status, Valid: true},
+		ID:     hostServiceId,
+	})
+	if err != nil {
+		fmt.Printf("Error updating host service status: %v\n", err)
+	}
+
+	// Send status update to all connected clients
+	payload := HostServiceStatusPayload{
+		HostServiceId: hostServiceId,
+		Status:        status,
+		Message:       message,
+		LastCheck:     time.Now().Format(time.RFC3339),
+	}
+	SendEvent("host-service-status", payload)
 }
 
 // TODO: update return type in order to send event types to different channels

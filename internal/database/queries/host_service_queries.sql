@@ -68,3 +68,10 @@ FROM host_services as hs
 JOIN hosts as h ON hs.host_id = h.id
 JOIN services as s ON hs.service_id = s.id
 Where hs.active = 1;
+
+-- name: UpdateHostServiceStatus :one
+UPDATE host_services SET
+    status = ?,
+    last_check = CURRENT_TIMESTAMP
+WHERE id = ?
+RETURNING *;

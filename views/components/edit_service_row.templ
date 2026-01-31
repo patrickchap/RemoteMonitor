@@ -137,12 +137,12 @@ templ EditServiceRow(service viewmodels.HostServiceEdit) {
 }
 
 templ ServiceRow(service viewmodels.HostServiceEdit) {
-	<tr id="abc" class="odd:bg-white odd:dark:bg-background-dark even:bg-gray-50 even:dark:bg-surface-dark border-b dark:border-gray-700">
+	<tr id={ fmt.Sprintf("service-row-%d", service.Id) } class="odd:bg-white odd:dark:bg-background-dark even:bg-gray-50 even:dark:bg-surface-dark border-b dark:border-gray-700">
 		<th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
 			{ service.ServiceName }
 		</th>
 		<td class="px-6 py-4">{ service.FormatedSchedual }</td>
-		<td class="px-6 py-4">
+		<td class="px-6 py-4" id={ fmt.Sprintf("service-status-%d", service.Id) }>
 			@GetStatus(service.Status)
 		</td>
 		<td class="px-6 py-4">
