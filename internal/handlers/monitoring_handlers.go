@@ -34,8 +34,7 @@ type HostServiceStatusPayload struct {
 }
 
 func (h *Handler) CheckHostService(hostServiceId int64) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
+	ctx := context.Background()
 	hostService, err := h.Store.GetHostService(ctx, hostServiceId)
 	if err != nil {
 		fmt.Printf("Error getting host service: %v", err)
@@ -53,9 +52,7 @@ func (h *Handler) CheckHostService(hostServiceId int64) {
 	fmt.Printf("Checking host service: %v\n", hostService)
 
 	// Persist the status to the database
-	updateCtx, updateCancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer updateCancel()
-	_, err = h.Store.UpdateHostServiceStatus(updateCtx, database.UpdateHostServiceStatusParams{
+	_, err = h.Store.UpdateHostServiceStatus(ctx, database.UpdateHostServiceStatusParams{
 		Status: sql.NullString{String: status, Valid: true},
 		ID:     hostServiceId,
 	})
@@ -73,6 +70,10 @@ func (h *Handler) CheckHostService(hostServiceId int64) {
 	SendEvent("host-service-status", payload)
 }
 
+var httpClient = &http.Client{
+	Timeout: 10 * time.Second,
+}
+
 // TODO: update return type in order to send event types to different channels
 func CheckHttpService(url string) (string, string) {
 	if strings.HasSuffix(url, "/") {
@@ -86,7 +87,7 @@ func CheckHttpService(url string) (string, string) {
 	}
 
 	fmt.Printf("Checking url: %v\n", url)
-	resp, err := http.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
 		return fmt.Sprintf("%s - %s", url, "error connecting"), "problem"
 	}
