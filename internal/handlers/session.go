@@ -36,7 +36,7 @@ func (h *Handler) GetSession(c echo.Context) *sessions.Session {
 	return sess
 }
 
-func (h *Handler) Set(c echo.Context, key string, value interface{}) error {
+func (h *Handler) Set(c echo.Context, key string, value any) error {
 	sess := h.GetSession(c)
 	sess.Values[key] = value
 
@@ -46,7 +46,7 @@ func (h *Handler) Set(c echo.Context, key string, value interface{}) error {
 	return nil
 }
 
-func (h *Handler) Get(c echo.Context, key string) interface{} {
+func (h *Handler) Get(c echo.Context, key string) any {
 	sess := h.GetSession(c)
 	return sess.Values[key]
 }
